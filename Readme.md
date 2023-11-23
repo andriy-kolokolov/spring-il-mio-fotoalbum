@@ -1,7 +1,4 @@
-## My Experis SPA Final Project
-
-
-
+## My Photoalbum
 
 ## How to run application ?
 
