@@ -8,8 +8,10 @@ import com.experis.photoalbum.response.ApiResponse;
 import com.experis.photoalbum.response.SigninResponse;
 import com.experis.photoalbum.security.JwtCore;
 import com.experis.photoalbum.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -57,30 +59,13 @@ public class SecurityController {
         this.jwtCore = jwtCore;
     }
 
-    @PostMapping("/signup")
-    ResponseEntity<?> signup(@RequestBody SignupRequest signupRequest) {
-        try {
-            if (userRepository.existsUserByUsername(signupRequest.getUsername())) {
-                return ResponseEntity
-                        .badRequest()
-                        .body(new ApiResponse("Choose a different name", false));
-            }
-            if (userRepository.existsUserByEmail(signupRequest.getEmail())) {
-                return ResponseEntity
-                        .badRequest()
-                        .body(new ApiResponse("Choose a different email", false));
-            }
+    @PostMapping(value = "/signup")
+    ResponseEntity<?> signup(@Valid @RequestBody SignupRequest signupRequest) {
 
-            userService.registerUser(signupRequest);
+        userService.registerUser(signupRequest);
 
-            return ResponseEntity
-                    .ok(new ApiResponse("User registered successfully", true));
-
-        } catch (Exception e) {
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse(e.getMessage(), false));
-        }
+        return ResponseEntity
+                .ok(new ApiResponse("User registered successfully", true));
     }
 
 

@@ -33,3 +33,4 @@ npm run dev
     ```shell
     ./mvnw spring-boot:run
     ```
+- run `import.sql` in `resources` folder for fake data in database

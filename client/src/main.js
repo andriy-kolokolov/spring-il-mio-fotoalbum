@@ -24,7 +24,7 @@ const app = createApp(App)
 // make axios available throughout application
 app.config.globalProperties.$axios = axios;
 // set the base URL for Axios
-axios.defaults.baseURL = 'http://localhost:8080/api/v1/';
+axios.defaults.baseURL = 'http://localhost:8080/';
 
 
 app.mount('#app')

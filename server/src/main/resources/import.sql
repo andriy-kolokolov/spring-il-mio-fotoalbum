@@ -1,15 +1,15 @@
 -- Users
-INSERT INTO experis_photoalbum.users (username)
-VALUES ('Alice'),
-       ('Bob'),
-       ('Charlie'),
-       ('David'),
-       ('Emma'),
-       ('Fiona'),
-       ('George'),
-       ('Hannah'),
-       ('Ian'),
-       ('Julia');
+INSERT INTO experis_photoalbum.users (username, password)
+VALUES ('Alice', 'password'),
+       ('Bob', 'password'),
+       ('Charlie', 'password'),
+       ('David', 'password'),
+       ('Emma', 'password'),
+       ('Fiona', 'password'),
+       ('George', 'password'),
+       ('Hannah', 'password'),
+       ('Ian', 'password'),
+       ('Julia', 'password');
 
 
 -- Categories
