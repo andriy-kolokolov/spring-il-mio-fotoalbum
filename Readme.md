@@ -1,7 +1,4 @@
-## My Experis SPA Final Project
-
-
-
+## My Photoalbum
 
 ## How to run application ?
 
@@ -17,7 +14,7 @@ git clone
 cd client
 ```
 ```shell
-cd npm i
+npm i
 ```
 ```shell
 npm run dev
