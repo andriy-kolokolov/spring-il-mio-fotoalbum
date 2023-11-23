@@ -15,6 +15,7 @@ import java.util.Set;
 @ToString
 @EqualsAndHashCode
 @Entity
+@Table(name = "photos")
 public class Photo {
 
     @Id
