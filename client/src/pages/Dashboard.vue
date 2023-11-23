@@ -7,7 +7,7 @@ export default {
 
 <template>
   <a-typography-title>
-    Home Page
+    Dashboard Page
   </a-typography-title>
 </template>
 

@@ -1,22 +1,18 @@
 <script>
-import MsHeader from "./components/MsHeader.vue";
+import { MsBaseLayout } from "./Layouts";
 
 export default {
   name: 'App',
   components: {
-    MsHeader
+    MsBaseLayout,
   }
 }
 </script>
 
 <template>
 
-  <ms-header/>
-
-  <main>
-    <router-view/>
-  </main>
-
+  <!--    AUTHENTICATED USER LAYOUT    -->
+  <ms-base-layout/>
 
 </template>
 
