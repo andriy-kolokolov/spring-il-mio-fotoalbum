@@ -1,7 +1,7 @@
-import Home from './Home.vue'
+import Dashboard from './Dashboard.vue'
 import Photos from './Photos.vue'
 
 export {
-    Home,
+    Dashboard,
     Photos,
 }
