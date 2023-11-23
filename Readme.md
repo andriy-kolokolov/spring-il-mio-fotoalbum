@@ -14,7 +14,7 @@ git clone
 cd client
 ```
 ```shell
-cd npm i
+npm i
 ```
 ```shell
 npm run dev
