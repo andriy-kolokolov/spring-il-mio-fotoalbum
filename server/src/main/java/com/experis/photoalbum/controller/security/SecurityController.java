@@ -59,21 +59,28 @@ public class SecurityController {
 
     @PostMapping("/signup")
     ResponseEntity<?> signup(@RequestBody SignupRequest signupRequest) {
-        if (userRepository.existsUserByUsername(signupRequest.getUsername())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new ApiResponse("Choose a different name", false));
-        }
-        if (userRepository.existsUserByEmail(signupRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new ApiResponse("Choose a different email", false));
-        }
+        try {
+            if (userRepository.existsUserByUsername(signupRequest.getUsername())) {
+                return ResponseEntity
+                        .badRequest()
+                        .body(new ApiResponse("Choose a different name", false));
+            }
+            if (userRepository.existsUserByEmail(signupRequest.getEmail())) {
+                return ResponseEntity
+                        .badRequest()
+                        .body(new ApiResponse("Choose a different email", false));
+            }
 
-        userService.registerUser(signupRequest);
+            userService.registerUser(signupRequest);
 
-        return ResponseEntity
-                .ok(new ApiResponse("User registered successfully", true));
+            return ResponseEntity
+                    .ok(new ApiResponse("User registered successfully", true));
+
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse(e.getMessage(), false));
+        }
     }
 
 
@@ -87,8 +94,8 @@ public class SecurityController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtCore.generateToken(authentication);
 
-            SigninResponse response = new SigninResponse(jwt, "Authentication successful", true);
-            return ResponseEntity.ok(response);
+            return ResponseEntity
+                    .ok(new SigninResponse(jwt, "Authentication successful", true));
 
         } catch (BadCredentialsException e) {
             return ResponseEntity
@@ -97,7 +104,7 @@ public class SecurityController {
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse("Internal server error", false));
+                    .body(new ApiResponse(e.getMessage(), false));
         }
     }
 }
