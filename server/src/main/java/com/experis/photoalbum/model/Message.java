@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @ToString
 @EqualsAndHashCode
 @Entity
+@Table(name = "messages")
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
