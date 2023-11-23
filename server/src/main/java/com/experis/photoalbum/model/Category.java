@@ -24,6 +24,5 @@ public class Category {
     private String name;
 
     @ManyToMany(mappedBy = "categories", fetch = FetchType.LAZY)
-    @JsonBackReference
     private Set<Photo> photos = new HashSet<>();
 }
