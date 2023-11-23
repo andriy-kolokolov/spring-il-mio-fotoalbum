@@ -1,32 +1,23 @@
 <script>
-import { HomeOutlined, PictureOutlined } from "@ant-design/icons-vue";
+import {
+  HomeOutlined,
+  LoginOutlined,
+  LogoutOutlined,
+  PictureOutlined
+} from "@ant-design/icons-vue";
 import { h } from "vue";
 
 export default {
   name: 'Header',
   components: {
     HomeOutlined,
+    LoginOutlined,
+    LogoutOutlined,
     PictureOutlined,
   },
   data() {
     return {
       activeKey: this.$route.path,
-      menuItems: [
-        {
-          key: '/dashboard',
-          icon: () => h(HomeOutlined),
-          label: 'Dashboard',
-          title: 'Dashboard',
-          onClick: () => this.navigateTo('/dashboard')
-        },
-        {
-          key: '/photos',
-          icon: () => h(PictureOutlined),
-          label: 'Photos',
-          title: 'Photos',
-          onClick: () => this.navigateTo('/photos')
-        },
-      ],
     }
   },
   methods: {
@@ -46,6 +37,58 @@ export default {
   },
   mounted() {
     this.updateActiveKey();
+  },
+  computed: {
+    computedMenuItems() {
+      // dynamically update menuItems based on authentication state
+      let menuItems = [
+        {
+          key: '/photos',
+          icon: () => h(PictureOutlined),
+          label: 'Photos',
+          title: 'Photos',
+          onClick: () => this.navigateTo('/photos')
+        },
+      ];
+      // todo authState.isAuthenticated
+      if (true) {
+        menuItems.push(
+            {
+              key: '/dashboard',
+              icon: () => h(HomeOutlined),
+              label: 'Dashboard',
+              title: 'Dashboard',
+              onClick: () => this.navigateTo('/dashboard')
+            }, {
+              key: '/logout',
+              icon: () => h(LogoutOutlined),
+              label: 'Logout',
+              title: 'Logout',
+              onClick: () => this.navigateTo('/logout'),
+              style: { color: 'red', borderColor: 'red' }
+            },
+        )
+      } else {
+        menuItems.push(
+            {
+              key: '/register',
+              icon: () => h(LoginOutlined),
+              label: 'Register',
+              title: 'Register',
+              onClick: () => this.navigateTo('/register')
+            },
+            {
+              key: '/login',
+              icon: () => h(LoginOutlined),
+              label: 'Login',
+              title: 'Login',
+              onClick: () => this.navigateTo('/login')
+            }
+        );
+      }
+
+      return menuItems;
+    }
   }
 }
 </script>
@@ -54,7 +97,7 @@ export default {
   <a-menu
       mode="horizontal"
       :selectedKeys="[activeKey]"
-      :items="menuItems"
+      :items="computedMenuItems"
   />
 </template>
 
