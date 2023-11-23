@@ -24,7 +24,11 @@ public class User {
     @Column(nullable = false, unique = true)
     private String username;
 
-    // Other user details like email, password, etc.
+    @Column(nullable = false)
+    private String password;
+
+    @Column(nullable = false)
+    private String email;
 
     @OneToMany(
             mappedBy = "sender",
