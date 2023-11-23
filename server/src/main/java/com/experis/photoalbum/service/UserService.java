@@ -35,7 +35,6 @@ public class UserService implements UserDetailsService {
     public void registerUser(SignupRequest signupRequest) {
         User user = new User();
         user.setUsername(signupRequest.getUsername());
-        user.setEmail(signupRequest.getEmail());
         user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
         userRepository.save(user);
     }

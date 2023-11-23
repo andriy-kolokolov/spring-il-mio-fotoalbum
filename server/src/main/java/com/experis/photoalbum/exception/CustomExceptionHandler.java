@@ -32,7 +32,7 @@ public class CustomExceptionHandler {
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Object> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
-        Map<String, Object> responseBody = new HashMap<>();
+        List<String> errors = new ArrayList<>();
 
         String errorMessage = "A data integrity error occurred";
         if (ex.getCause() != null && ex.getCause().getCause() != null) {
@@ -41,8 +41,10 @@ public class CustomExceptionHandler {
                 errorMessage = "Username already exists. Please choose a different username.";
             }
         }
+        errors.add(errorMessage);
 
-        responseBody.put("error", errorMessage);
+        Map<String, Object> responseBody = new HashMap<>();
+        responseBody.put("errors", errors);
         responseBody.put("status", HttpStatus.CONFLICT.value());
         responseBody.put("success", false);
 
