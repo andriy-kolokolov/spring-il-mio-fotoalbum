@@ -1,9 +1,11 @@
-package com.experis.photoalbum.security;
+package com.experis.photoalbum.controller.security;
 
 import com.experis.photoalbum.model.User;
 import com.experis.photoalbum.repository.UserRepository;
 import com.experis.photoalbum.request.SigninRequest;
 import com.experis.photoalbum.request.SignupRequest;
+import com.experis.photoalbum.response.ApiResponse;
+import com.experis.photoalbum.response.SigninResponse;
 import com.experis.photoalbum.security.JwtCore;
 import com.experis.photoalbum.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,7 @@ public class SecurityController {
     public void setUserService(UserService userService) {
         this.userService = userService;
     }
+
     @Autowired
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
@@ -57,28 +60,44 @@ public class SecurityController {
     @PostMapping("/signup")
     ResponseEntity<?> signup(@RequestBody SignupRequest signupRequest) {
         if (userRepository.existsUserByUsername(signupRequest.getUsername())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Chose different name");
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ApiResponse("Choose a different name", false));
         }
         if (userRepository.existsUserByEmail(signupRequest.getEmail())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Chose different email");
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ApiResponse("Choose a different email", false));
         }
 
         userService.registerUser(signupRequest);
 
-        return ResponseEntity.ok("User registered successfully");
+        return ResponseEntity
+                .ok(new ApiResponse("User registered successfully", true));
     }
 
 
     @PostMapping("/signin")
     ResponseEntity<?> signin(@RequestBody SigninRequest signinRequest) {
-        Authentication authentication = null;
         try {
-            authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(signinRequest.getUsername(), signinRequest.getPassword()));
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(signinRequest.getUsername(), signinRequest.getPassword())
+            );
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            String jwt = jwtCore.generateToken(authentication);
+
+            SigninResponse response = new SigninResponse(jwt, "Authentication successful", true);
+            return ResponseEntity.ok(response);
+
         } catch (BadCredentialsException e) {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return ResponseEntity
+                    .badRequest()
+                    .body(new SigninResponse(null, "Bad credentials", false));
+        } catch (Exception e) {
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse("Internal server error", false));
         }
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        String jwt = jwtCore.generateToken(authentication);
-        return ResponseEntity.ok(jwt);
     }
 }

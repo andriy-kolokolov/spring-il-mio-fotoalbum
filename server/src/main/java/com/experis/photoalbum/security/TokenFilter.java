@@ -1,5 +1,6 @@
 package com.experis.photoalbum.security;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -15,6 +16,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class TokenFilter extends OncePerRequestFilter {
@@ -47,10 +51,23 @@ public class TokenFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (ExpiredJwtException e) {
             logger.error("Expired JWT Token", e);
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            handleException(response, "Expired JWT Token", HttpServletResponse.SC_UNAUTHORIZED, e);
         } catch (Exception e) {
             logger.error("Authentication error", e);
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            handleException(response, "Authentication error", HttpServletResponse.SC_UNAUTHORIZED, e);
         }
+    }
+
+    private void handleException(HttpServletResponse response, String message, int status, Exception e) throws IOException {
+        logger.error(message, e);
+
+        Map<String, Object> errorDetails = new HashMap<>();
+        errorDetails.put("message", e.getMessage());
+        errorDetails.put("timestamp", new Date());
+        errorDetails.put("status", status);
+
+        response.setStatus(status);
+        response.setContentType("application/json");
+        new ObjectMapper().writeValue(response.getWriter(), errorDetails);
     }
 }

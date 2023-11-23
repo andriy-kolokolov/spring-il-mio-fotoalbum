@@ -2,9 +2,6 @@ package com.experis.photoalbum.security;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import jakarta.annotation.PostConstruct;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -17,14 +14,6 @@ public class JwtCore {
     private String secret;
     @Value("${app.lifetime}")
     private int lifetime;
-
-    private static final Logger logger = LoggerFactory.getLogger(JwtCore.class);
-
-    @PostConstruct
-    public void init() {
-        logger.info("JwtCore initialized with secret: {} and lifetime: {}", secret, lifetime);
-    }
-
 
     public String generateToken(Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
