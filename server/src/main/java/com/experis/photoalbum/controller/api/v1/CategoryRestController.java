@@ -19,8 +19,26 @@ public class CategoryRestController {
         this.categoryService = categoryService;
     }
 
+    // get all categories
+    @GetMapping("/list")
+    public ResponseEntity<List<CategoryDTO>> getAll() {
+        List<Category> categories = categoryService.findAll();
+
+        if (categories == null || categories.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<CategoryDTO> CategoryDTOs = categories
+                .stream()
+                .map(CategoryDTO::fromCategory)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(CategoryDTOs);
+    }
+
+
     @GetMapping("/list/{id}")
-    public ResponseEntity<List<CategoryDTO>> findPhotosByUserId(
+    public ResponseEntity<List<CategoryDTO>> getByPhotoId(
             @PathVariable(value = "id") Long id
     ) {
         List<Category> categories = categoryService.findByPhotoId(id);

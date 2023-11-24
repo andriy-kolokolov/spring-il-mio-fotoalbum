@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class CategoryService {
@@ -18,5 +19,15 @@ public class CategoryService {
 
     public List<Category> findByPhotoId(Long id) {
         return categoryRepository.findCategoriesByPhotoId(id);
+    }
+
+    // find all
+    public List<Category> findAll() {
+        return categoryRepository.findAll();
+    }
+
+    // get categories by ids
+    public Set<Category> findByIds(List<Long> ids) {
+        return categoryRepository.findCategoriesByIdIn(ids);
     }
 }
