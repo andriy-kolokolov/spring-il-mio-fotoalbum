@@ -1,10 +1,12 @@
 package com.experis.photoalbum.controller.api.v1;
 
 import com.experis.photoalbum.dto.PhotoDTO;
+import com.experis.photoalbum.model.Category;
 import com.experis.photoalbum.model.Photo;
 import com.experis.photoalbum.model.User;
 import com.experis.photoalbum.request.PhotoRequest;
 import com.experis.photoalbum.response.ApiResponse;
+import com.experis.photoalbum.service.CategoryService;
 import com.experis.photoalbum.service.PhotoService;
 import com.experis.photoalbum.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -20,10 +23,12 @@ public class PhotoRestController {
 
     private final PhotoService photoService;
     private final UserService userService;
+    private final CategoryService categoryService;
 
-    public PhotoRestController(PhotoService photoService, UserService userService) {
+    public PhotoRestController(PhotoService photoService, UserService userService, CategoryService categoryService) {
         this.photoService = photoService;
         this.userService = userService;
+        this.categoryService = categoryService;
     }
 
     @GetMapping("/list")
@@ -63,6 +68,9 @@ public class PhotoRestController {
         photo.setDescription(photoRequest.getDescription());
         photo.setVisible(photoRequest.isVisible());
 
+        Set<Category> categories = categoryService.findByIds(photoRequest.getCategoryIds());
+        photo.setCategories(categories);
+
         photoService.save(photo);
 
         return ResponseEntity
@@ -79,21 +87,25 @@ public class PhotoRestController {
     }
 
     // put
-    @PutMapping("/{id}")
+    @PutMapping("/update/{id}")
     public ResponseEntity<?> updatePhoto(@PathVariable(value = "id") Long id,
                                          @RequestBody PhotoRequest photoRequest) {
         Photo photo = photoService.findById(id);
         if (photo == null) {
             return ResponseEntity.notFound().build();
         }
+
         photo.setTitle(photoRequest.getTitle());
         photo.setDescription(photoRequest.getDescription());
         photo.setIsVisible(photoRequest.getIsVisible());
+
+        // Retrieve the updated categories from the database
+        Set<Category> updatedCategories = categoryService.findByIds(photoRequest.getCategoryIds());
+        photo.setCategories(updatedCategories); // Update the photo with new categories
 
         photoService.save(photo);
 
         return ResponseEntity
                 .ok(new ApiResponse("Photo updated successfully", true));
-
     }
 }

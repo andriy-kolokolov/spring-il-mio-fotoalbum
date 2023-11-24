@@ -4,6 +4,7 @@ import PhotoService from "../services/PhotoService.js";
 import { authState } from "../store/index.js";
 import AuthService from "../services/AuthService.js";
 import { message, notification } from "ant-design-vue";
+import CategoryService from "../services/CategoryService.js";
 
 export default {
   name: 'Dashboard',
@@ -15,14 +16,18 @@ export default {
   data() {
     return {
       photos: [],
+      photoCategories: [],
+      allCategories: [],
       showCreate: false,
       showUpdate: false,
       editingPhoto: null,
+      selectedCategories: null,
       form: {
         userId: authState.user.id,
         title: '',
         description: '',
-        isVisible: false
+        isVisible: false,
+        categoryIds: []
       },
       isSubmitting: false,
       errors: [],
@@ -34,8 +39,20 @@ export default {
     async fetchUserPhotos() {
       this.photos = await PhotoService.getPhotosByUserId(authState.user.id);
     },
+    async fetchAllCategories() {
+      this.allCategories = await CategoryService.getAll();
+    },
+    async fetchPhotoCategories(photoId) {
+      const response = await CategoryService.getByPhotoId(photoId)
+      if (response.status === 404) {
+        this.photoCategories = [];
+      }
+      this.photoCategories = response;
+
+    },
     openCreate() {
       this.showCreate = true;
+      this.selectedCategories = [];
     },
     async handleCreate() {
       // reset errors and alerts
@@ -45,7 +62,7 @@ export default {
       await new Promise(resolve => setTimeout(resolve, 350));
 
       try {
-        // await new Promise(resolve => setTimeout(resolve, 500));
+        this.form.categoryIds = this.selectedCategories;
         const response = await PhotoService.createPhoto(this.form);
         console.log(this.form)
         if (response.success) {
@@ -66,6 +83,13 @@ export default {
     },
 
     openUpdate(photo) {
+      this.fetchPhotoCategories(photo.id).then(() => {
+        if (this.photoCategories.length > 0) {
+          this.selectedCategories = this.photoCategories.map(c => c.id);
+        } else {
+          this.selectedCategories = [];
+        }
+      });
       this.editingPhoto = { ...photo };
       this.showUpdate = true;
     },
@@ -73,6 +97,7 @@ export default {
     async handleUpdate() {
       this.isSubmitting = true;
       try {
+        this.editingPhoto.categoryIds = this.selectedCategories;
         const response = await PhotoService.updatePhoto(this.editingPhoto.id, this.editingPhoto);
         if (response.success) {
           message.success('Photo updated successfully!');
@@ -111,7 +136,8 @@ export default {
     }
   },
   created() {
-    this.fetchUserPhotos()
+    this.fetchUserPhotos();
+    this.fetchAllCategories();
   },
 }
 
@@ -219,7 +245,7 @@ export default {
 
   </a-row>
 
-
+  <!--    CREATE    -->
   <a-modal
       ref="modalRef"
       v-model:open="showCreate"
@@ -255,12 +281,22 @@ export default {
         </a-input>
       </a-form-item>
       <a-form-item
-
       >
         <a-checkbox
             v-model:checked="form.isVisible"
         >Make Visible
         </a-checkbox>
+      </a-form-item>
+
+      <!-- Category Checkboxes -->
+      <a-form-item label="Categories">
+        <a-checkbox-group v-model:value="selectedCategories">
+          <a-row>
+            <a-col v-for="category in allCategories" :key="category.id" span="8">
+              <a-checkbox :value="category.id">{{ category.name }}</a-checkbox>
+            </a-col>
+          </a-row>
+        </a-checkbox-group>
       </a-form-item>
 
       <a-button
@@ -288,16 +324,27 @@ export default {
         @submit.prevent="handleUpdate"
     >
       <a-form-item label="Title">
-        <a-input v-model:value="editingPhoto.title" />
+        <a-input v-model:value="editingPhoto.title"/>
       </a-form-item>
       <a-form-item label="Description">
-        <a-textarea v-model:value="editingPhoto.description" />
+        <a-textarea v-model:value="editingPhoto.description"/>
       </a-form-item>
       <a-form-item>
         <a-checkbox
             v-model:checked="editingPhoto.isVisible"
         >Make Visible
         </a-checkbox>
+      </a-form-item>
+
+      <!-- Category Checkboxes -->
+      <a-form-item label="Categories">
+        <a-checkbox-group v-model:value="selectedCategories">
+          <a-row>
+            <a-col v-for="category in allCategories" :key="category.id" span="8">
+              <a-checkbox :value="category.id">{{ category.name }}</a-checkbox>
+            </a-col>
+          </a-row>
+        </a-checkbox-group>
       </a-form-item>
 
       <a-button
