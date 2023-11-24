@@ -20,6 +20,7 @@ export default {
   data() {
     return {
       activeKey: this.$route.path,
+      username: '',
     }
   },
   methods: {
@@ -32,8 +33,9 @@ export default {
       this.activeKey = this.$route.path;
     },
     handleLogoutClick() {
-      AuthService.logout();
-    }
+      AuthService.logout(this.$router);
+    },
+
   },
   watch: {
     '$route'() {
@@ -48,7 +50,7 @@ export default {
       return authState.isAuthenticated;
     },
     getUserName() {
-      return this.$user.username;
+      return this.authenticated ? `Welcome, ${authState.user.username}`  : '';
     },
     computedMenuItems() {
       // permitted for all nav
@@ -119,7 +121,7 @@ export default {
           :level="5"
           :style="{whiteSpace: 'nowrap', margin: 0}"
         >
-          Welcome,  {{ getUserName }}
+          {{ getUserName }}
         </a-typography-title>
         <a-button
             v-if="authenticated"
