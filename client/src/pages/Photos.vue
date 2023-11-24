@@ -76,6 +76,20 @@ export default {
         >
         </a-card-meta>
 
+        <a-divider
+            :style="{fontSize: '14px'}"
+            orientation="right"
+            orientation-margin="0px"
+        >Categories
+        </a-divider>
+        <a-card-meta
+            v-for="category in photo.categories"
+            :style="{textAlign: 'right'}"
+            :description="category.name"
+        >
+        </a-card-meta>
+
+
       </a-card>
     </a-col>
 
