@@ -96,6 +96,6 @@ export default {
 }
 
 .ms-photo-transition {
-  animation: fadeInUp .7s ease-out;
+  animation: fadeInUp .6s ease-out;
 }
 </style>

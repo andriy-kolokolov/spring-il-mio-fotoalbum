@@ -48,7 +48,7 @@ const photoService = {
     // Update a photo
     async updatePhoto(id, updatedData) {
         try {
-            const response = await API.put(`/${id}`, updatedData);
+            const response = await API.put(`/update/${id}`, updatedData);
             return response.data;
         } catch (error) {
             return error;
