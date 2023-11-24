@@ -2,6 +2,7 @@
 import { MsHeader } from "../Components/";
 
 import itIT from 'ant-design-vue/es/locale/it_IT';
+import { theme } from "ant-design-vue";
 
 export default {
   components: {

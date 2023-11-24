@@ -63,6 +63,7 @@ public class SecurityConfigurator {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/api/v1/photo/list").permitAll()
                         .requestMatchers("/api/**").authenticated()
                         .requestMatchers("/auth/**").permitAll()
                         .anyRequest().permitAll()
