@@ -1,14 +1,16 @@
 <script>
 import AuthService from '../../services/AuthService.js';
-import { notification } from "ant-design-vue";
+import { LoginOutlined } from "@ant-design/icons-vue";
 
 export default {
   name: 'Register',
+  components: {
+    LoginOutlined
+  },
   data() {
     return {
       form: {
         username: '',
-        email: '',
         password: '',
       },
       errors: null,
@@ -77,7 +79,6 @@ export default {
             v-if="success"
         >
           <a-alert
-
               message="Registration success, you can login now!"
               type="success"
               show-icon
@@ -122,11 +123,11 @@ export default {
         <a-form-item
         >
           <a-button
-              :style="{display: 'flex', justifyContent: 'center', width: '100%'}"
+              :style="{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%'}"
               type="primary"
               :loading="isSubmitting"
               html-type="submit"
-          >Register
+          >Register <LoginOutlined/>
           </a-button>
 
         </a-form-item>

@@ -7,6 +7,7 @@ import {
 } from "@ant-design/icons-vue";
 import { h } from "vue";
 import { authState } from "../store/index.js";
+import AuthService from "../services/AuthService.js";
 
 export default {
   name: 'Header',
@@ -30,6 +31,9 @@ export default {
     updateActiveKey() {
       this.activeKey = this.$route.path;
     },
+    handleLogoutClick() {
+      AuthService.logout();
+    }
   },
   watch: {
     '$route'() {
@@ -40,6 +44,9 @@ export default {
     this.updateActiveKey();
   },
   computed: {
+    authenticated() {
+      return authState.isAuthenticated;
+    },
     computedMenuItems() {
       // permitted for all nav
       let menuItems = [
@@ -60,13 +67,6 @@ export default {
               label: 'Dashboard',
               title: 'Dashboard',
               onClick: () => this.navigateTo('/dashboard')
-            }, {
-              key: '/logout',
-              icon: () => h(LogoutOutlined),
-              label: 'Logout',
-              title: 'Logout',
-              onClick: () => this.navigateTo('/logout'),
-              style: { color: 'red', borderColor: 'red' }
             },
         )
       } else {
@@ -95,11 +95,31 @@ export default {
 </script>
 
 <template>
-  <a-menu
-      mode="horizontal"
-      :selectedKeys="[activeKey]"
-      :items="computedMenuItems"
-  />
+  <a-row justify="space-between">
+    <a-col
+        :span="20"
+    >
+      <a-menu
+          mode="horizontal"
+          :selectedKeys="[activeKey]"
+          :items="computedMenuItems"
+      />
+    </a-col>
+    <a-col
+        :span="4"
+        align="end"
+    >
+      <a-button
+          v-if="authenticated"
+          type="primary"
+          danger
+          @click="handleLogoutClick"
+      >
+        Logout
+      </a-button>
+    </a-col>
+  </a-row>
+
 </template>
 
 <style lang="scss">

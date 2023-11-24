@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { setAuthStatus } from "../store/index.js";
+import { notification } from "ant-design-vue";
 
 const API_URL = 'http://localhost:8080/auth/';
 
@@ -21,6 +22,9 @@ class AuthService {
     logout() {
         localStorage.removeItem('user');
         setAuthStatus(false);
+        notification.warning({
+            message: 'You successfully logged out !'
+        })
     }
 }
 
