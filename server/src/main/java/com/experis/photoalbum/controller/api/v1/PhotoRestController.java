@@ -55,7 +55,7 @@ public class PhotoRestController {
 
     //create photo
     @PostMapping("/add")
-    public  ResponseEntity<?> createPhoto(@RequestBody PhotoRequest photoRequest) {
+    public ResponseEntity<?> createPhoto(@RequestBody PhotoRequest photoRequest) {
         User user = userService.getUserById(photoRequest.getUserId());
         Photo photo = new Photo();
         photo.setUser(user);
@@ -76,5 +76,24 @@ public class PhotoRestController {
         photoService.delete(id);
         return ResponseEntity
                 .ok(new ApiResponse("Photo deleted successfully", true));
+    }
+
+    // put
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updatePhoto(@PathVariable(value = "id") Long id,
+                                         @RequestBody PhotoRequest photoRequest) {
+        Photo photo = photoService.findById(id);
+        if (photo == null) {
+            return ResponseEntity.notFound().build();
+        }
+        photo.setTitle(photoRequest.getTitle());
+        photo.setDescription(photoRequest.getDescription());
+        photo.setIsVisible(photoRequest.getIsVisible());
+
+        photoService.save(photo);
+
+        return ResponseEntity
+                .ok(new ApiResponse("Photo updated successfully", true));
+
     }
 }

@@ -33,7 +33,7 @@ public class PhotoService {
         return photoRepository.findByUserId(id);
     }
 
-    public Photo getById(Long id) {
+    public Photo findById(Long id) {
         return photoRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("Photo with id " + id + " does not exist")
         );

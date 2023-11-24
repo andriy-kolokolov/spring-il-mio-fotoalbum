@@ -16,6 +16,8 @@ export default {
     return {
       photos: [],
       showCreate: false,
+      showUpdate: false,
+      editingPhoto: null,
       form: {
         userId: authState.user.id,
         title: '',
@@ -35,7 +37,7 @@ export default {
     openCreate() {
       this.showCreate = true;
     },
-    async handleSubmit() {
+    async handleCreate() {
       // reset errors and alerts
       this.errors = [];
       this.success = false;
@@ -55,6 +57,29 @@ export default {
         } else {
           this.errors = response.response.data.errors;
           console.log(this.errors)
+        }
+      } catch (error) {
+        this.errors = error.response.data;
+      } finally {
+        this.isSubmitting = false;
+      }
+    },
+
+    openUpdate(photo) {
+      this.editingPhoto = { ...photo };
+      this.showUpdate = true;
+    },
+
+    async handleUpdate() {
+      this.isSubmitting = true;
+      try {
+        const response = await PhotoService.updatePhoto(this.editingPhoto.id, this.editingPhoto);
+        if (response.success) {
+          message.success('Photo updated successfully!');
+          await this.fetchUserPhotos();
+          this.showUpdate = false;
+        } else {
+          this.errors = response.response.data.errors;
         }
       } catch (error) {
         this.errors = error.response.data;
@@ -140,7 +165,12 @@ export default {
         </template>
 
         <template #actions>
-          <edit-outlined key="edit"/>
+          <a-button
+              type="link"
+              @click="openUpdate(photo)"
+          >
+            <edit-outlined :style="{fontSize: '16px'}" key="edit"/>
+          </a-button>
           <a-popconfirm
               title="Are you sure delete this task?"
               ok-text="Yes"
@@ -177,6 +207,7 @@ export default {
 
     <div
         v-else
+        class="ms-photo-transition"
     >
       <a-typography-title
           :level="3"
@@ -195,7 +226,7 @@ export default {
       title="Add new photo"
   >
     <a-form
-        @submit.prevent="handleSubmit"
+        @submit.prevent="handleCreate"
         layout="vertical"
     >
 
@@ -231,7 +262,7 @@ export default {
         >Make Visible
         </a-checkbox>
       </a-form-item>
-    {{ form }}
+
       <a-button
           html-type="submit"
           type="primary"
@@ -241,7 +272,45 @@ export default {
       </a-button>
     </a-form>
     <template #footer>
-      <!--    to delete default buttons    -->
+      <!--    to hide default footer buttons    -->
+    </template>
+  </a-modal>
+
+
+  <!-- Update Modal -->
+  <a-modal
+      v-model:open="showUpdate"
+      title="Update photo"
+      :confirm-loading="isSubmitting"
+  >
+    <a-form
+        layout="vertical"
+        @submit.prevent="handleUpdate"
+    >
+      <a-form-item label="Title">
+        <a-input v-model:value="editingPhoto.title" />
+      </a-form-item>
+      <a-form-item label="Description">
+        <a-textarea v-model:value="editingPhoto.description" />
+      </a-form-item>
+      <a-form-item>
+        <a-checkbox
+            v-model:checked="editingPhoto.isVisible"
+        >Make Visible
+        </a-checkbox>
+      </a-form-item>
+
+      <a-button
+          html-type="submit"
+          type="primary"
+          :loading="isSubmitting"
+      >
+        Update
+      </a-button>
+    </a-form>
+
+    <template #footer>
+      <!--    to hide default footer buttons    -->
     </template>
   </a-modal>
 </template>
