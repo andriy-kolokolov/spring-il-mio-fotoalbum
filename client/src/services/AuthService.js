@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { setAuthStatus } from "../store/index.js";
 
 const API_URL = 'http://localhost:8080/auth/';
 
@@ -12,12 +13,14 @@ class AuthService {
         const response = await axios.post(API_URL + 'signin', user);
         if (response.data.success && response.data.token) {
             localStorage.setItem('user', JSON.stringify(response.data.token));
+            setAuthStatus(true);
         }
         return response.data;
     }
 
     logout() {
         localStorage.removeItem('user');
+        setAuthStatus(false);
     }
 }
 

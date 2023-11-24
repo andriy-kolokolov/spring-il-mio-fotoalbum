@@ -1,5 +1,6 @@
 <script>
 import AuthService from '../../services/AuthService.js';
+import { notification } from "ant-design-vue";
 
 export default {
   name: 'Register',
@@ -10,29 +11,41 @@ export default {
         email: '',
         password: '',
       },
-      errorMessage: null,
+      errors: null,
+      success: false,
+      userExists: null,
       isSubmitting: false,
     }
   },
   methods: {
     async handleSubmit() {
       this.isSubmitting = true;
+      // reset errors and alerts
+      this.errors = null;
+      this.success = false;
+      this.userExists = null;
       try {
         await new Promise(resolve => setTimeout(resolve, 500));
-
         const response = await AuthService.register(this.form);
-
         if (response.success) {
-
-        } else {
-          console.log(response)
+          this.success = true;
         }
       } catch (error) {
-        console.error(error.response.data)
-        this.errorMessage = error.response.data.message;
+        console.log(error.response.data.status)
+        if (error.response.data.status === 409) { // username conflict error status
+          this.userExists = error.response.data.errors.username;
+          console.log('xui')
+        }
+        this.errors = error.response.data.errors;
       } finally {
         this.isSubmitting = false;
       }
+    },
+    getFieldStatus(fieldName) {
+      if (this.errors && this.errors[fieldName]) {
+        return 'error';
+      }
+      return 'success';
     }
   }
 }
@@ -40,41 +53,87 @@ export default {
 
 <template>
 
-  <a-alert
-      v-if="errorMessage"
-      message="Error"
-      :description="errorMessage"
-      type="error"
-      show-icon
-  />
-
-  <a-form
-      @submit.prevent="handleSubmit"
-      :model="form"
+  <a-flex
+      justify="center"
+      align="center"
+      :style="{
+        height: '80vh'
+      }"
   >
-    <a-form-item
-        label="Username"
+    <a-card
+        title="Registration form"
+        class="ms-card"
+        :style="{
+          minWidth: '600px',
+          padding: '15px 15px 0 15px',
+          textAlign: 'center'
+        }"
     >
-      <a-input v-model:value="form.username" placeholder="Username"></a-input>
+      <a-form
+          @submit.prevent="handleSubmit"
+          :model="form"
+      >
+        <a-form-item
+            v-if="success"
+        >
+          <a-alert
 
-    </a-form-item>
+              message="Registration success, you can login now!"
+              type="success"
+              show-icon
+          />
+        </a-form-item>
+        <a-form-item
+            v-if="userExists"
+        >
+          <a-alert
+              :message="errors.username"
+              type="error"
+              show-icon
+          />
+        </a-form-item>
 
-    <a-form-item
-        label="Email"
-    >
-      <a-input v-model:value="form.email" type="email" placeholder="Email"></a-input>
-    </a-form-item>
+        <a-form-item
+            label="Username"
+            :help="errors && errors.username"
+            :validate-status="getFieldStatus('username')"
+        >
+          <a-input
+              v-model:value="form.username"
+              placeholder="Username"
+              :status="getFieldStatus('username')"
+          ></a-input>
 
-    <a-form-item
-        label="Password"
-    >
-      <a-input v-model:value="form.password" type="password" placeholder="Password"></a-input>
-    </a-form-item>
+        </a-form-item>
 
-    <a-form-item>
-      <a-button type="primary" :loading="isSubmitting" html-type="submit">Register</a-button>
-    </a-form-item>
-  </a-form>
+        <a-form-item
+            label="Password"
+            :help="errors && errors.password"
+            :validate-status="getFieldStatus('password')"
+        >
+          <a-input
+              v-model:value="form.password"
+              type="password"
+              placeholder="Password"
+              :status="getFieldStatus('password')"
+          ></a-input>
+        </a-form-item>
+
+        <a-form-item
+        >
+          <a-button
+              :style="{display: 'flex', justifyContent: 'center', width: '100%'}"
+              type="primary"
+              :loading="isSubmitting"
+              html-type="submit"
+          >Register
+          </a-button>
+
+        </a-form-item>
+      </a-form>
+    </a-card>
+  </a-flex>
+
 </template>
 
 <style lang="scss">

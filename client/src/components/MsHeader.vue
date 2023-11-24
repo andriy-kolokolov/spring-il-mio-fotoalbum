@@ -6,6 +6,7 @@ import {
   PictureOutlined
 } from "@ant-design/icons-vue";
 import { h } from "vue";
+import { authState } from "../store/index.js";
 
 export default {
   name: 'Header',
@@ -40,7 +41,7 @@ export default {
   },
   computed: {
     computedMenuItems() {
-      // dynamically update menuItems based on authentication state
+      // permitted for all nav
       let menuItems = [
         {
           key: '/photos',
@@ -50,8 +51,8 @@ export default {
           onClick: () => this.navigateTo('/photos')
         },
       ];
-      // todo authState.isAuthenticated
-      if (true) {
+      // authenticated nav
+      if (authState.isAuthenticated) {
         menuItems.push(
             {
               key: '/dashboard',
