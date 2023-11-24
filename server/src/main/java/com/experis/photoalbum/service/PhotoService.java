@@ -25,6 +25,10 @@ public class PhotoService {
         return photoRepository.findByTitleContainingIgnoreCaseOrderByTitle(title);
     }
 
+    public List<Photo> findByUserId(Long id) {
+        return photoRepository.findByUserId(id);
+    }
+
     public Photo getById(Long id) {
         return photoRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("Photo with id " + id + " does not exist")

@@ -9,4 +9,7 @@ import java.util.List;
 @Repository
 public interface PhotoRepository extends JpaRepository<Photo, Long> {
     List<Photo> findByTitleContainingIgnoreCaseOrderByTitle(String title);
+
+    // get user photos
+    List<Photo> findByUserId(Long userId);
 }

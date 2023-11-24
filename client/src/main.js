@@ -12,6 +12,7 @@ import 'dayjs/locale/it.js';
 import router from './router/index.js';
 
 import App from './App.vue'
+import { setAuthStatus } from "./store/index.js";
 
 
 // set locale
@@ -21,10 +22,14 @@ const app = createApp(App)
     .use(Antd)
     .use(router)
 
-// make axios available throughout application
-app.config.globalProperties.$axios = axios;
 // set the base URL for Axios
 axios.defaults.baseURL = 'http://localhost:8080/';
 
+// auth check, save user data in global variable
+if (localStorage.getItem('token') && localStorage.getItem('user')) {
+    setAuthStatus(true);
+    const userData = JSON.parse(localStorage.getItem('user'));
+    app.config.globalProperties.$user = userData;
+}
 
 app.mount('#app')

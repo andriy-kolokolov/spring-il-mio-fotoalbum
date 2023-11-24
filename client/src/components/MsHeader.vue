@@ -47,6 +47,9 @@ export default {
     authenticated() {
       return authState.isAuthenticated;
     },
+    getUserName() {
+      return this.$user.username;
+    },
     computedMenuItems() {
       // permitted for all nav
       let menuItems = [
@@ -97,7 +100,7 @@ export default {
 <template>
   <a-row justify="space-between">
     <a-col
-        :span="20"
+        :xs="12"
     >
       <a-menu
           mode="horizontal"
@@ -106,17 +109,27 @@ export default {
       />
     </a-col>
     <a-col
-        :span="4"
         align="end"
+        :xs="12"
     >
-      <a-button
-          v-if="authenticated"
-          type="primary"
-          danger
-          @click="handleLogoutClick"
+      <a-space
+        :size="15"
       >
-        Logout
-      </a-button>
+        <a-typography-title
+          :level="5"
+          :style="{whiteSpace: 'nowrap', margin: 0}"
+        >
+          Welcome,  {{ getUserName }}
+        </a-typography-title>
+        <a-button
+            v-if="authenticated"
+            type="primary"
+            danger
+            @click="handleLogoutClick"
+        >
+          Logout
+        </a-button>
+      </a-space>
     </a-col>
   </a-row>
 

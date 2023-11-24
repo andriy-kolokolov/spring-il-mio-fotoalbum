@@ -13,13 +13,15 @@ class AuthService {
     async login(user) {
         const response = await axios.post(API_URL + 'signin', user);
         if (response.data.success && response.data.token) {
-            localStorage.setItem('user', JSON.stringify(response.data.token));
+            localStorage.setItem('token', JSON.stringify(response.data.token));
+            localStorage.setItem('user', JSON.stringify(response.data.user));
             setAuthStatus(true);
         }
         return response.data;
     }
 
     logout() {
+        localStorage.removeItem('token');
         localStorage.removeItem('user');
         setAuthStatus(false);
         message.success('You successfully logged out !')

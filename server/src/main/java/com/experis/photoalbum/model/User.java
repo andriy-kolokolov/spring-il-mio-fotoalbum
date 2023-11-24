@@ -1,5 +1,6 @@
 package com.experis.photoalbum.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -40,6 +41,7 @@ public class User {
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
+    @JsonManagedReference
     private Set<Message> sentMessages = new HashSet<>();
 
     @OneToMany(
@@ -47,6 +49,7 @@ public class User {
             cascade = CascadeType.ALL,
             fetch = FetchType.LAZY
     )
+    @JsonBackReference
     private Set<Message> receivedMessages = new HashSet<>();
 
     @OneToMany(

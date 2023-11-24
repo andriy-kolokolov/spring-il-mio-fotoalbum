@@ -7,7 +7,7 @@ const API = axios.create({
 
 // Interceptor to attach the token to requests
 API.interceptors.request.use((req) => {
-    const token = JSON.parse(localStorage.getItem('user'));
+    const token = JSON.parse(localStorage.getItem('token'));
     if (token) {
         req.headers.Authorization = `Bearer ${token}`;
     }
@@ -29,6 +29,16 @@ const photoService = {
     async getPhotos() {
         try {
             const response = await API.get('/list');
+            return response.data;
+        } catch (error) {
+            return error;
+        }
+    },
+
+    // Get photos by user id
+    async getPhotosByUserId(id) {
+        try {
+            const response = await API.get(`/list/${id}`);
             return response.data;
         } catch (error) {
             return error;

@@ -21,6 +21,7 @@ public class Message {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sender_id", nullable = false)
+    @JsonBackReference
     private User sender;
 
     @ManyToOne(fetch = FetchType.LAZY)

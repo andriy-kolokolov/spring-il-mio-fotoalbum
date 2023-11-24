@@ -1,5 +1,6 @@
 package com.experis.photoalbum.controller.security;
 
+import com.experis.photoalbum.dto.UserDTO;
 import com.experis.photoalbum.model.User;
 import com.experis.photoalbum.repository.UserRepository;
 import com.experis.photoalbum.request.SigninRequest;
@@ -23,6 +24,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
@@ -79,13 +82,24 @@ public class SecurityController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtCore.generateToken(authentication);
 
+            Optional<User> optionalUser = userRepository.findByUsername(signinRequest.getUsername());
+
+            if (optionalUser.isEmpty()) {
+                return ResponseEntity
+                        .status(HttpStatus.UNAUTHORIZED)
+                        .body(new SigninResponse(null, "User not found", false, null));
+            }
+
+            User user = optionalUser.get();
+            UserDTO userDTO = UserDTO.fromUser(user);
+
             return ResponseEntity
-                    .ok(new SigninResponse(jwt, "Authentication successful", true));
+                    .ok(new SigninResponse(jwt, "Authentication successful", true, userDTO));
 
         } catch (BadCredentialsException e) {
             return ResponseEntity
                     .badRequest()
-                    .body(new SigninResponse(null, "Bad credentials", false));
+                    .body(new SigninResponse(null, "Bad credentials", false, null));
         } catch (Exception e) {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
