@@ -172,7 +172,7 @@ export default {
             <edit-outlined :style="{fontSize: '16px'}" key="edit"/>
           </a-button>
           <a-popconfirm
-              title="Are you sure delete this task?"
+              title="Are you sure delete this photo?"
               ok-text="Yes"
               cancel-text="No"
               @confirm="handleDelete(photo.id)"
