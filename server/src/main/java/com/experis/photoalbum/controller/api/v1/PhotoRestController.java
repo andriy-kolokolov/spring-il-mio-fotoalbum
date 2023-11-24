@@ -1,10 +1,13 @@
 package com.experis.photoalbum.controller.api.v1;
 
 import com.experis.photoalbum.dto.PhotoDTO;
-import com.experis.photoalbum.dto.UserDTO;
 import com.experis.photoalbum.model.Photo;
 import com.experis.photoalbum.model.User;
+import com.experis.photoalbum.request.PhotoRequest;
+import com.experis.photoalbum.response.ApiResponse;
 import com.experis.photoalbum.service.PhotoService;
+import com.experis.photoalbum.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,9 +19,11 @@ import java.util.stream.Collectors;
 public class PhotoRestController {
 
     private final PhotoService photoService;
+    private final UserService userService;
 
-    public PhotoRestController(PhotoService photoService) {
+    public PhotoRestController(PhotoService photoService, UserService userService) {
         this.photoService = photoService;
+        this.userService = userService;
     }
 
     @GetMapping("/list")
@@ -46,5 +51,30 @@ public class PhotoRestController {
                 .collect(Collectors.toList());
 
         return ResponseEntity.ok(photoDTOs);
+    }
+
+    //create photo
+    @PostMapping("/add")
+    public  ResponseEntity<?> createPhoto(@RequestBody PhotoRequest photoRequest) {
+        User user = userService.getUserById(photoRequest.getUserId());
+        Photo photo = new Photo();
+        photo.setUser(user);
+        photo.setTitle(photoRequest.getTitle());
+        photo.setDescription(photoRequest.getDescription());
+        photo.setVisible(photoRequest.isVisible());
+
+        photoService.save(photo);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(new ApiResponse("Photo created successfully", true));
+    }
+
+    // delete
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deletePhoto(@PathVariable(value = "id") Long id) {
+        photoService.delete(id);
+        return ResponseEntity
+                .ok(new ApiResponse("Photo deleted successfully", true));
     }
 }

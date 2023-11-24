@@ -18,7 +18,7 @@ const photoService = {
     // Create a new photo
     async createPhoto(photoData) {
         try {
-            const response = await API.post('/', photoData);
+            const response = await API.post('/add', photoData);
             return response.data;
         } catch (error) {
             return error;
@@ -58,7 +58,7 @@ const photoService = {
     // Delete a photo
     async deletePhoto(id) {
         try {
-            const response = await API.delete(`/${id}`);
+            const response = await API.delete(`/delete/${id}`);
             return response.data;
         } catch (error) {
             return error;

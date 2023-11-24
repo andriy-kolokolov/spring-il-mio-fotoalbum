@@ -1,5 +1,6 @@
 package com.experis.photoalbum.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,33 +23,43 @@ public class CustomExceptionHandler {
             errors.put(fieldName, errorMessage);
         });
 
-        Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put("errors", errors);
-        responseBody.put("status", HttpStatus.BAD_REQUEST.value());
-        responseBody.put("success", false);
-
-        return new ResponseEntity<>(responseBody, HttpStatus.BAD_REQUEST);
+        return buildResponseEntity(errors, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<Object> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
-        Map<String, String> errorDetails = new HashMap<>();
+        Map<String, Object> errorDetails = new HashMap<>();
         String errorMessage = "A data integrity error occurred";
 
-        if (ex.getCause() != null && ex.getCause().getCause() != null) {
-            String detailedMessage = ex.getCause().getCause().getMessage();
-            if (detailedMessage.contains("UK_r43af9ap4edm43mmtq01oddj6")) {
-                errorMessage = "Username already exists. Please choose a different username.";
-            }
+        Throwable rootCause = ex.getRootCause();
+        if (rootCause != null) {
+            errorMessage = rootCause.getMessage();
         }
 
-        errorDetails.put("username", errorMessage);
+        errorDetails.put("error", errorMessage);
 
+        return buildResponseEntity(errorDetails, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Object> handleConstraintViolation(ConstraintViolationException ex) {
+        Map<String, String> errorDetails = new HashMap<>();
+
+        ex.getConstraintViolations().forEach(violation -> {
+            String field = violation.getPropertyPath().toString();
+            String message = violation.getMessage();
+            errorDetails.put(field, message);
+        });
+
+        return buildResponseEntity(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
+    private ResponseEntity<Object> buildResponseEntity(Map<String, ?> errors, HttpStatus status) {
         Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put("errors", errorDetails);
-        responseBody.put("status", HttpStatus.CONFLICT.value());
-        responseBody.put("success", false);
+        responseBody.put("errors", errors);
+        responseBody.put("status", status.value());
+        responseBody.put("success", status.is4xxClientError() || status.is5xxServerError());
 
-        return new ResponseEntity<>(responseBody, HttpStatus.CONFLICT);
+        return new ResponseEntity<>(responseBody, status);
     }
 }

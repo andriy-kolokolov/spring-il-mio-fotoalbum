@@ -3,6 +3,8 @@ package com.experis.photoalbum.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.HashSet;
@@ -23,9 +25,13 @@ public class Photo {
     private int id;
 
     @Column(nullable = false)
+    @NotEmpty(message = "Title is required")
+    @Size(min = 4, message = "Title must be at least 4 characters")
     private String title;
 
     @Column(length = 500)
+    @NotEmpty(message = "Description is required")
+    @Size(min = 6, max = 500 ,message = "Description must be min 6 characters and max 500")
     private String description;
 
     private boolean isVisible;

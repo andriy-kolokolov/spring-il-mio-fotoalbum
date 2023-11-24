@@ -35,8 +35,8 @@ public class PhotoService {
         );
     }
 
-    public void save(Photo pizza) {
-        photoRepository.save(pizza);
+    public void save(Photo photo) {
+        photoRepository.save(photo);
     }
 
     public void delete(Long id) {
