@@ -34,7 +34,7 @@ public class Photo {
     @Size(min = 6, max = 500 ,message = "Description must be min 6 characters and max 500")
     private String description;
 
-    private boolean isVisible;
+    private Boolean isVisible;
 
     @ManyToMany(fetch = FetchType.LAZY,
             cascade = {

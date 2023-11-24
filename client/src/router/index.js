@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import { Dashboard, Photos } from '../pages/index.js'
-import { Register, Login, Logout } from '../pages/auth/index.js'
+import { Register, Login } from '../pages/auth/index.js'
 
 const routes = [
     {
@@ -23,11 +23,6 @@ const routes = [
         path: '/login',
         name: 'Login',
         component: Login
-    },
-    {
-        path: '/logout',
-        name: 'Logout',
-        component: Logout
     },
 ]
 

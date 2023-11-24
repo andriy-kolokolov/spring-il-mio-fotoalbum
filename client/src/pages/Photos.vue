@@ -21,7 +21,6 @@ export default {
   methods: {
     async fetchPhotos() {
       this.photos = await PhotoService.getPhotos();
-      console.log(this.photos)
     },
   },
   mounted() {
@@ -34,7 +33,7 @@ export default {
   <a-divider orientation="center">
     <a-typography-title
         :level="3"
-    >Photos
+    >User List Photos
     </a-typography-title>
   </a-divider>
   <a-row

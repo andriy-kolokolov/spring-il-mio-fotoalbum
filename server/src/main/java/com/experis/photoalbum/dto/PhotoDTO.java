@@ -5,6 +5,7 @@ import com.experis.photoalbum.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Data
 @AllArgsConstructor
@@ -13,7 +14,7 @@ public class PhotoDTO {
     private int id;
     private String title;
     private String description;
-    private boolean isVisible;
+    private Boolean isVisible;
     private UserDTO user;
 
     public static PhotoDTO fromPhoto(Photo photo) {
@@ -21,7 +22,7 @@ public class PhotoDTO {
         dto.setId(photo.getId());
         dto.setTitle(photo.getTitle());
         dto.setDescription(photo.getDescription());
-        dto.setVisible(photo.isVisible());
+        dto.setIsVisible(photo.getIsVisible());
         dto.setUser(UserDTO.fromUser(photo.getUser()));
 
         return dto;

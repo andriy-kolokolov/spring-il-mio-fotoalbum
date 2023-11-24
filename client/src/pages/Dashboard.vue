@@ -32,26 +32,32 @@ export default {
     async fetchUserPhotos() {
       this.photos = await PhotoService.getPhotosByUserId(authState.user.id);
     },
-    createPhoto() {
+    openCreate() {
       this.showCreate = true;
     },
     async handleSubmit() {
-      this.isSubmitting = true;
       // reset errors and alerts
-      this.errros = [];
+      this.errors = [];
       this.success = false;
+      this.isSubmitting = true;
+      await new Promise(resolve => setTimeout(resolve, 350));
+
       try {
         // await new Promise(resolve => setTimeout(resolve, 500));
         const response = await PhotoService.createPhoto(this.form);
+        console.log(this.form)
         if (response.success) {
           this.success = true;
           await this.fetchUserPhotos();
           this.showCreate = false;
           await new Promise(resolve => setTimeout(resolve, 350));
           message.success('New photo created successfully!')
+        } else {
+          this.errors = response.response.data.errors;
+          console.log(this.errors)
         }
       } catch (error) {
-        this.errorMessage = error.response.data.message;
+        this.errors = error.response.data;
       } finally {
         this.isSubmitting = false;
       }
@@ -65,12 +71,11 @@ export default {
     async handleDelete(photoId) {
       try {
         this.deletingPhotoId = photoId;
-        await new Promise(resolve => setTimeout(resolve, 500)); // 500ms for fade-out effect
+        await new Promise(resolve => setTimeout(resolve, 500));
 
         const response = await PhotoService.deletePhoto(photoId);
         if (response.success === true) {
           message.success(response.message);
-          this.deletingPhotoId = null;
           await this.fetchUserPhotos();
         }
       } catch (error) {
@@ -102,7 +107,7 @@ export default {
     <a-col>
       <a-button
           type="primary"
-          @click="createPhoto"
+          @click="openCreate"
       >
         Add new one +
       </a-button>
@@ -191,6 +196,7 @@ export default {
   >
     <a-form
         @submit.prevent="handleSubmit"
+        layout="vertical"
     >
 
       <a-form-item
@@ -225,10 +231,11 @@ export default {
         >Make Visible
         </a-checkbox>
       </a-form-item>
-
+    {{ form }}
       <a-button
           html-type="submit"
           type="primary"
+          :loading="isSubmitting"
       >
         Create
       </a-button>

@@ -67,6 +67,7 @@ export default {
       <a-form
           @submit.prevent="handleSubmit"
           :model="form"
+          layout="vertical"
       >
         <a-form-item
             v-if="success"

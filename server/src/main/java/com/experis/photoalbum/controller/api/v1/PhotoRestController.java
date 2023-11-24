@@ -32,7 +32,7 @@ public class PhotoRestController {
     ) {
         List<Photo> photos = (title != null && !title.trim().isEmpty()) ?
                 photoService.findByTitle(title) :
-                photoService.findAll();
+                photoService.finAllVisible();
         return ResponseEntity.ok(photos);
     }
 
@@ -61,7 +61,7 @@ public class PhotoRestController {
         photo.setUser(user);
         photo.setTitle(photoRequest.getTitle());
         photo.setDescription(photoRequest.getDescription());
-        photo.setVisible(photoRequest.isVisible());
+        photo.setIsVisible(photoRequest.getIsVisible());
 
         photoService.save(photo);
 

@@ -33,10 +33,8 @@ export default {
           this.success = true;
         }
       } catch (error) {
-        console.log(error.response.data.status)
         if (error.response.data.status === 409) { // username conflict error status
-          this.userExists = error.response.data.errors.username;
-          console.log('xui')
+          this.userExists = error.response.data.errors;
         }
         this.errors = error.response.data.errors;
       } finally {
@@ -74,6 +72,7 @@ export default {
       <a-form
           @submit.prevent="handleSubmit"
           :model="form"
+          layout="vertical"
       >
         <a-form-item
             v-if="success"
@@ -88,7 +87,7 @@ export default {
             v-if="userExists"
         >
           <a-alert
-              :message="errors.username"
+              message="User already exists."
               type="error"
               show-icon
           />

@@ -12,4 +12,6 @@ public interface PhotoRepository extends JpaRepository<Photo, Long> {
 
     // get user photos
     List<Photo> findByUserId(Long userId);
+
+    List<Photo> getAllByIsVisibleTrue();
 }

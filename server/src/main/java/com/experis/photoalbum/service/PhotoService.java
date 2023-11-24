@@ -21,6 +21,10 @@ public class PhotoService {
         return photoRepository.findAll();
     }
 
+    public List<Photo> finAllVisible() {
+        return photoRepository.getAllByIsVisibleTrue();
+    }
+
     public List<Photo> findByTitle(String title) {
         return photoRepository.findByTitleContainingIgnoreCaseOrderByTitle(title);
     }
