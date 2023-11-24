@@ -1,6 +1,5 @@
 package com.experis.photoalbum.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -14,8 +13,8 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString
-@EqualsAndHashCode
+@ToString(exclude = "categories") // Exclude categories to avoid stack overflow in toString
+@EqualsAndHashCode(exclude = "categories") // Exclude categories to avoid circular references
 @Entity
 @Table(name = "photos")
 public class Photo {
@@ -31,24 +30,21 @@ public class Photo {
 
     @Column(length = 500)
     @NotEmpty(message = "Description is required")
-    @Size(min = 6, max = 500 ,message = "Description must be min 6 characters and max 500")
+    @Size(min = 6, max = 500, message = "Description must be min 6 characters and max 500")
     private String description;
 
     private Boolean isVisible;
 
-    @ManyToMany(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.PERSIST,
-                    CascadeType.MERGE
-            })
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "photo_category",
             joinColumns = {@JoinColumn(name = "photo_id")},
             inverseJoinColumns = {@JoinColumn(name = "category_id")}
     )
+    @JsonManagedReference
     private Set<Category> categories = new HashSet<>();
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }

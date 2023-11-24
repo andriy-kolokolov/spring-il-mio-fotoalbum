@@ -1,11 +1,12 @@
 package com.experis.photoalbum.dto;
 
 import com.experis.photoalbum.model.Photo;
-import com.experis.photoalbum.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -16,6 +17,7 @@ public class PhotoDTO {
     private String description;
     private Boolean isVisible;
     private UserDTO user;
+    private List<CategoryDTO> categories;
 
     public static PhotoDTO fromPhoto(Photo photo) {
         PhotoDTO dto = new PhotoDTO();
@@ -24,6 +26,14 @@ public class PhotoDTO {
         dto.setDescription(photo.getDescription());
         dto.setIsVisible(photo.getIsVisible());
         dto.setUser(UserDTO.fromUser(photo.getUser()));
+
+        if (photo.getCategories() != null) {
+            dto.setCategories(photo
+                    .getCategories()
+                    .stream()
+                    .map(CategoryDTO::fromCategory)
+                    .collect(Collectors.toList()));
+        }
 
         return dto;
     }
