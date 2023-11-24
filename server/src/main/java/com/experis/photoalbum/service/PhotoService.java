@@ -1,6 +1,7 @@
 package com.experis.photoalbum.service;
 
 import com.experis.photoalbum.model.Photo;
+import com.experis.photoalbum.repository.CategoryRepository;
 import com.experis.photoalbum.repository.PhotoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

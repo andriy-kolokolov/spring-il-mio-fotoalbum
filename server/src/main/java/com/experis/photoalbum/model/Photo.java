@@ -1,5 +1,6 @@
 package com.experis.photoalbum.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -13,8 +14,6 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@ToString(exclude = "categories") // Exclude categories to avoid stack overflow in toString
-@EqualsAndHashCode(exclude = "categories") // Exclude categories to avoid circular references
 @Entity
 @Table(name = "photos")
 public class Photo {
@@ -35,13 +34,13 @@ public class Photo {
 
     private Boolean isVisible;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany()
     @JoinTable(
             name = "photo_category",
             joinColumns = {@JoinColumn(name = "photo_id")},
             inverseJoinColumns = {@JoinColumn(name = "category_id")}
     )
-    @JsonManagedReference
+    @JsonIgnore
     private Set<Category> categories = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

@@ -1,6 +1,7 @@
 package com.experis.photoalbum.dto;
 
 import com.experis.photoalbum.model.Photo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

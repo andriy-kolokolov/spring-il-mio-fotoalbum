@@ -27,13 +27,18 @@ public class PhotoRestController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<Photo>> findPhotos(
+    public ResponseEntity<List<PhotoDTO>> findPhotos(
             @RequestParam(value = "title", required = false) String title
     ) {
         List<Photo> photos = (title != null && !title.trim().isEmpty()) ?
                 photoService.findByTitle(title) :
                 photoService.finAllVisible();
-        return ResponseEntity.ok(photos);
+        List<PhotoDTO> photoDTOs = photos
+                .stream()
+                .map(PhotoDTO::fromPhoto)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(photoDTOs);
     }
 
     @GetMapping("/list/{id}")
