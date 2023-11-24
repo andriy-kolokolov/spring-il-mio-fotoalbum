@@ -181,7 +181,8 @@ export default {
     >
       <a-card
           class="ms-card ms-photo-transition"
-          :style="{height: '100%'}"
+          :style="{height: '100%', display: 'flex', flexDirection: 'column'}"
+          :body-style="{flexGrow: '1'}"
       >
         <template #cover>
           <img
@@ -227,7 +228,18 @@ export default {
             description="You"
         >
         </a-card-meta>
-
+        <a-divider
+            :style="{fontSize: '14px'}"
+            orientation="right"
+            orientation-margin="0px"
+        >Categories
+        </a-divider>
+        <a-card-meta
+            v-for="category in photo.categories"
+            :style="{textAlign: 'right'}"
+            :description="category.name"
+        >
+        </a-card-meta>
       </a-card>
     </a-col>
 
