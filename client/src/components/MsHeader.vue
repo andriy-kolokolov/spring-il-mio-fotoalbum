@@ -3,7 +3,8 @@ import {
   HomeOutlined,
   LoginOutlined,
   LogoutOutlined,
-  PictureOutlined
+  MessageOutlined,
+  PictureOutlined,
 } from "@ant-design/icons-vue";
 import { h } from "vue";
 import { authState } from "../store/index.js";
@@ -16,6 +17,7 @@ export default {
     LoginOutlined,
     LogoutOutlined,
     PictureOutlined,
+    MessageOutlined,
   },
   data() {
     return {
@@ -72,6 +74,13 @@ export default {
               label: 'Dashboard',
               title: 'Dashboard',
               onClick: () => this.navigateTo('/dashboard')
+            },
+            {
+              key: '/messages',
+              icon: () => h(MessageOutlined),
+              label: 'Messages',
+              title: 'Messages',
+              onClick: () => this.navigateTo('/messages')
             },
         )
       } else {

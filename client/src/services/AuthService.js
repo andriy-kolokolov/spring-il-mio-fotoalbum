@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { setAuthStatus, setUser } from "../store/index.js";
+import { authState, setAuthStatus, setUser } from "../store/index.js";
 import { message, notification } from "ant-design-vue";
 
 const API_URL = 'http://localhost:8080/auth/';
@@ -16,6 +16,8 @@ class AuthService {
             localStorage.setItem('token', JSON.stringify(response.data.token));
             localStorage.setItem('user', JSON.stringify(response.data.user));
             setAuthStatus(true);
+            console.log(response.data.user)
+            authState.user = response.data.user;
             setUser(response.data.user)
         }
         return response.data;

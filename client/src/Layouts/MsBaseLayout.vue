@@ -69,10 +69,10 @@ export default {
               background: '#fff',
               fontSize: '12px',
               textAlign: 'right',
-              padding: '10px 20px',
+              padding: '10px 20px'
           }"
         >
-          @Photoalbum by Andriy Kolokolov v 1.0.0 | All Rights Reserved
+          @Photoalbum v 1.0.0 | All Rights Reserved
         </a-layout-footer>
 
       </a-layout>

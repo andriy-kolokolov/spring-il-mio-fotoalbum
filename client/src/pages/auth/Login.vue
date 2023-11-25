@@ -106,14 +106,21 @@ export default {
           ></a-input>
         </a-form-item>
 
-        <a-form-item
-        >
+        <a-form-item>
+
+          <a-typography-paragraph>
+            Use <a-tag color="orange">Alice</a-tag> for username and <a-tag color="orange">asdasd</a-tag> for password.
+          </a-typography-paragraph>
+        </a-form-item>
+
+        <a-form-item>
           <a-button
               :style="{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%'}"
               type="primary"
               :loading="isSubmitting"
               html-type="submit"
-          >Login <LoginOutlined/>
+          >Login
+            <LoginOutlined/>
           </a-button>
 
         </a-form-item>

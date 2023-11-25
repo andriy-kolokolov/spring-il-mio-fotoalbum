@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import { Dashboard, Photos } from '../pages/index.js'
+import { Dashboard, Photos, Messages } from '../pages/index.js'
 import { Register, Login } from '../pages/auth/index.js'
 
 const routes = [
@@ -13,6 +13,11 @@ const routes = [
         path: '/photos',
         name: 'Photos',
         component: Photos
+    },
+    {
+        path: '/messages',
+        name: 'Messages',
+        component: Messages
     },
     {
         path: '/register',
