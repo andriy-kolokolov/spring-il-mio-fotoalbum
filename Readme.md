@@ -1,5 +1,4 @@
-## My Photoalbum
-### Spring rest API + Vuejs simple photoalbum manager 
+## Spring rest API + Vuejs simple photoalbum manager 
 
 ## Features
 - Server - Authentication system using JWT token with expiration
