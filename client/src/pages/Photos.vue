@@ -1,11 +1,11 @@
 <script>
 import {
-  SettingOutlined,
+  DeleteOutlined,
   EditOutlined,
   EllipsisOutlined,
   MessageOutlined,
-  DeleteOutlined,
-  UserOutlined
+  SettingOutlined,
+  UserOutlined,
 } from "@ant-design/icons-vue";
 import PhotoService from "../services/PhotoService.js";
 import MessageService from "../services/MessageService.js";
@@ -32,6 +32,7 @@ export default {
       receiverName: '',
       messagePhoto: null,
       fetching: true,
+      searchTerm: '',
     }
   },
   methods: {
@@ -74,6 +75,23 @@ export default {
     },
     setMessageModalTitle(photo) {
       this.receiverName = photo.user.username;
+    },
+    async onSearch() {
+      if (this.searchTerm !== '' && this.searchTerm.length > 0) {
+        this.fetching = true;
+        this.photos = await PhotoService.getPhotosByTitle(this.searchTerm);
+        this.fetching = false;
+      } else {
+        antMessage.warning("Search term is empty.")
+      }
+    },
+    resetSearch() {
+      if(this.searchTerm.length > 0) {
+        this.searchTerm = '';
+        this.fetchPhotos();
+      } else {
+        antMessage.warning("Search already reset.")
+      }
     }
   },
   mounted() {
@@ -87,6 +105,7 @@ export default {
   <a-divider orientation="center">
     <a-typography-title
         :level="3"
+        :style="{margin: 0}"
     >User List Photos
     </a-typography-title>
   </a-divider>
@@ -95,10 +114,39 @@ export default {
       :spinning="fetching"
       tip="Loading..."
   >
+
+    <a-row
+        :style="{margin: '0', padding: '20px', width: '100%'}"
+        v-if="!fetching"
+    >
+      <a-col
+          :span="24"
+          align="center"
+      >
+        <a-space :size="12">
+          <a-button
+              @click="resetSearch"
+              type="primary"
+              shape="round"
+          >
+            Reset
+          </a-button>
+
+          <a-input-search
+              v-model:value="searchTerm"
+              placeholder="Search by title"
+              style="min-width: 250px;"
+              @search="onSearch"
+          />
+
+        </a-space>
+      </a-col>
+    </a-row>
+
     <a-row
         :style="{margin: '0', padding: '20px', width: '100%'}"
         :gutter="[36, 36]"
-        v-if="!fetching"
+        v-if="!fetching && photos.length > 0"
     >
       <a-col
           :xs="24"
@@ -161,6 +209,14 @@ export default {
         </a-card>
       </a-col>
     </a-row>
+
+    <a-typography-title
+        :level="3"
+        :style="{paddingInline: '20px'}"
+        v-else
+    >
+      No photos found for request: {{ searchTerm }}
+    </a-typography-title>
   </a-spin>
 
   <!--    SEND MESSAGE MODAL    -->

@@ -36,6 +36,20 @@ const photoService = {
         }
     },
 
+    // search by title
+    async getPhotosByTitle(term) {
+        try {
+            const response = await API.get('/list', {
+                params: {
+                    title: term,
+                }
+            });
+            return response.data;
+        } catch (error) {
+            return error;
+        }
+    },
+
     // Get photos by user id
     async getPhotosByUserId(id) {
         try {
