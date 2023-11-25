@@ -2,8 +2,7 @@
 import { EditOutlined, DeleteOutlined, SettingOutlined } from "@ant-design/icons-vue";
 import PhotoService from "../services/PhotoService.js";
 import { authState } from "../store/index.js";
-import AuthService from "../services/AuthService.js";
-import { message, notification } from "ant-design-vue";
+import { message } from "ant-design-vue";
 import CategoryService from "../services/CategoryService.js";
 
 export default {
@@ -33,6 +32,7 @@ export default {
       errors: [],
       success: false,
       deletingPhotoId: null,
+      fetching: true,
     }
   },
   methods: {
@@ -135,10 +135,11 @@ export default {
 
     }
   },
-  created() {
+  mounted() {
     this.fetchUserPhotos();
     this.fetchAllCategories();
-  },
+    this.fetching = false;
+  }
 }
 
 </script>
@@ -150,113 +151,114 @@ export default {
     >Your Photos
     </a-typography-title>
   </a-divider>
-
-  <a-row
-      :style="{paddingInline: '20px', width: '100%'}"
-      align="center"
+  <a-spin
+      :spinning="fetching"
+      tip="Loading..."
   >
-    <a-col>
-      <a-button
-          type="primary"
-          @click="openCreate"
-      >
-        Add new one +
-      </a-button>
-    </a-col>
-  </a-row>
+    <a-row
+        :style="{paddingInline: '20px', width: '100%'}"
+        align="center"
+        v-if="!fetching"
 
-  <a-row
-      :style="{margin: '0', padding: '20px', width: '100%'}"
-      :gutter="[36, 36]"
-  >
-    <a-col
-        v-if="photos.length > 0"
-        :xs="24"
-        :md="12"
-        :lg="8"
-        :xxl="6"
-        v-for="photo in photos"
-        :class="{ 'fade-out': deletingPhotoId === photo.id }"
-        :key="photo.id"
     >
-      <a-card
-          class="ms-card ms-photo-transition"
-          :style="{height: '100%', display: 'flex', flexDirection: 'column'}"
-          :body-style="{flexGrow: '1'}"
-      >
-        <template #cover>
-          <img
-              alt="example"
-              src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-          />
-        </template>
+      <a-col>
+        <a-button
+            type="primary"
+            @click="openCreate"
+        >
+          Add new one +
+        </a-button>
+      </a-col>
+    </a-row>
 
-        <template #actions>
-          <a-button
-              type="link"
-              @click="openUpdate(photo)"
-          >
-            <edit-outlined :style="{fontSize: '16px'}" key="edit"/>
-          </a-button>
-          <a-popconfirm
-              title="Are you sure delete this photo?"
-              ok-text="Yes"
-              cancel-text="No"
-              @confirm="handleDelete(photo.id)"
-          >
+    <a-row
+        :style="{margin: '0', padding: '20px', width: '100%'}"
+        :gutter="[36, 36]"
+        v-if="photos.length > 0 && !fetching"
+    >
+      <a-col
+          :xs="24"
+          :md="12"
+          :lg="8"
+          :xl="6"
+          v-for="photo in photos"
+          :class="{ 'fade-out': deletingPhotoId === photo.id }"
+          :key="photo.id"
+      >
+        <a-card
+            class="ms-card ms-photo-transition"
+            :style="{height: '100%', display: 'flex', flexDirection: 'column'}"
+            :body-style="{flexGrow: '1'}"
+        >
+          <template #cover>
+            <img
+                alt="example"
+                src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+            />
+          </template>
+
+          <template #actions>
             <a-button
                 type="link"
+                @click="openUpdate(photo)"
             >
-              <delete-outlined :style="{color: 'red', fontSize: '16px'}" key="ellipsis"/>
+              <edit-outlined :style="{fontSize: '16px'}" key="edit"/>
             </a-button>
-          </a-popconfirm>
-        </template>
+            <a-popconfirm
+                title="Are you sure delete this photo?"
+                ok-text="Yes"
+                cancel-text="No"
+                @confirm="handleDelete(photo.id)"
+            >
+              <a-button
+                  type="link"
+              >
+                <delete-outlined :style="{color: 'red', fontSize: '16px'}" key="ellipsis"/>
+              </a-button>
+            </a-popconfirm>
+          </template>
 
-        <a-card-meta
-            :title="photo.title"
-            :description="photo.description"
-        >
-        </a-card-meta>
-        <a-divider
-            :style="{fontSize: '14px'}"
-            orientation="right"
-            orientation-margin="0px"
-        >Made by
-        </a-divider>
-        <a-card-meta
-            :style="{textAlign: 'right'}"
-            description="You"
-        >
-        </a-card-meta>
-        <a-divider
-            :style="{fontSize: '14px'}"
-            orientation="right"
-            orientation-margin="0px"
-        >Categories
-        </a-divider>
-        <a-card-meta
-            v-for="category in photo.categories"
-            :style="{textAlign: 'right'}"
-            :description="category.name"
-        >
-        </a-card-meta>
-      </a-card>
-    </a-col>
+          <a-card-meta
+              :title="photo.title"
+              :description="photo.description"
+          >
+          </a-card-meta>
+          <a-divider
+              :style="{fontSize: '14px'}"
+              orientation="right"
+              orientation-margin="0px"
+          >Made by
+          </a-divider>
+          <a-card-meta
+              :style="{textAlign: 'right'}"
+              description="You"
+          >
+          </a-card-meta>
+          <a-divider
+              :style="{fontSize: '14px'}"
+              orientation="right"
+              orientation-margin="0px"
+          >Categories
+          </a-divider>
+          <a-card-meta
+              v-for="category in photo.categories"
+              :style="{textAlign: 'right'}"
+              :description="category.name"
+          >
+          </a-card-meta>
+        </a-card>
+      </a-col>
+    </a-row>
 
-    <div
-        v-else
+    <a-typography-title
+        :level="3"
         class="ms-photo-transition"
+        :style="{paddingInline: '20px'}"
+        v-else
     >
-      <a-typography-title
-          :level="3"
-      >
-        You have no photos :(
-      </a-typography-title>
-
-    </div>
-
-  </a-row>
-
+      You have no photos :(
+    </a-typography-title>
+  </a-spin>
   <!--    CREATE    -->
   <a-modal
       ref="modalRef"

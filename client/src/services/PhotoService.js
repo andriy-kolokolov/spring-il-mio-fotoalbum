@@ -19,6 +19,7 @@ const photoService = {
     async createPhoto(photoData) {
         try {
             const response = await API.post('/add', photoData);
+            console.log(response)
             return response.data;
         } catch (error) {
             return error;

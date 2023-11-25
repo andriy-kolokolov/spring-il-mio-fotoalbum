@@ -2,6 +2,8 @@ package com.experis.photoalbum.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -29,6 +31,9 @@ public class Message {
     private User receiver;
 
     @Column(nullable = false, length = 500)
+    @NotEmpty(message = "Message content is required")
+    @Size(min = 4, message = "TMessage minimum length is 10 characters")
+    @Size(max = 500, message = "Message maximum length is 500 characters")
     private String content;
 
     private LocalDateTime sentAt = LocalDateTime.now();

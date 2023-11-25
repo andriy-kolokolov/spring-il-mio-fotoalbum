@@ -6,6 +6,7 @@ import com.experis.photoalbum.repository.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,6 +15,8 @@ public class MessageService {
 
     @Autowired
     private MessageRepository messageRepository;
+    @Autowired
+    private UserService userService;
 
     public List<MessageDTO> getSentMessagesByUserId(Long userId) {
         List<Message> sentMessages = messageRepository.findBySenderId(userId);
@@ -27,5 +30,14 @@ public class MessageService {
         return receivedMessages.stream()
                 .map(MessageDTO::fromMessage)
                 .collect(Collectors.toList());
+    }
+
+    // sen message
+    public MessageDTO saveMessage(Message message) {
+        message.setSender(userService.getUserById(message.getSender().getId()));
+        message.setReceiver(userService.getUserById(message.getReceiver().getId()));
+        message.setContent(message.getContent());
+        message.setSentAt(LocalDateTime.now());
+        return MessageDTO.fromMessage(messageRepository.save(message)); // save the message and return the DTO
     }
 }
