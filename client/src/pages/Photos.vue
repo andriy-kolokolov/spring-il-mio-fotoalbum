@@ -3,28 +3,82 @@ import {
   SettingOutlined,
   EditOutlined,
   EllipsisOutlined,
+  MessageOutlined,
+  DeleteOutlined,
+  UserOutlined
 } from "@ant-design/icons-vue";
 import PhotoService from "../services/PhotoService.js";
+import MessageService from "../services/MessageService.js";
+import { message as antMessage } from "ant-design-vue";
+
 
 export default {
   name: 'Photos',
   components: {
+    DeleteOutlined,
     SettingOutlined,
     EditOutlined,
     EllipsisOutlined,
+    MessageOutlined,
+    UserOutlined
   },
   data() {
     return {
       photos: [],
+      messageContent: '',
+      errors: [],
+      showSendMessage: false,
+      isSubmitting: false,
+      receiverName: '',
+      messagePhoto: null,
+      fetching: true,
     }
   },
   methods: {
     async fetchPhotos() {
       this.photos = await PhotoService.getPhotos();
     },
+    async sendMessage() {
+      this.errors = [];
+      const photo = this.messagePhoto;
+      const message = this.messageContent;
+      const receiverId = photo.user.id
+
+      this.isSubmitting = true
+      // to simulate request
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      const messageResponse = await MessageService.sendMessage(receiverId, message)
+      if (messageResponse && messageResponse.response &&
+          messageResponse.response.data &&
+          messageResponse.response.data.errors
+      ) {
+        this.errors = messageResponse.response.data.errors;
+      } else {
+        this.messageContent = '';
+        this.showSendMessage = false;
+        antMessage.success(`Message to user ${ this.messagePhoto.user.username } sent successfully !`)
+      }
+      this.isSubmitting = false;
+    },
+    getFieldStatus(fieldName) {
+      if (this.errors && this.errors[fieldName]) {
+        return 'error';
+      }
+      return 'success';
+    },
+    showSendMessageModal(photo) {
+      this.messagePhoto = photo;
+      this.showSendMessage = true
+      this.setMessageModalTitle(photo)
+    },
+    setMessageModalTitle(photo) {
+      this.receiverName = photo.user.username;
+    }
   },
   mounted() {
     this.fetchPhotos()
+    this.fetching = false;
   },
 }
 </script>
@@ -36,64 +90,121 @@ export default {
     >User List Photos
     </a-typography-title>
   </a-divider>
-  <a-row
-      :style="{margin: '0', padding: '20px', width: '100%'}"
-      :gutter="[36, 36]"
+
+  <a-spin
+      :spinning="fetching"
+      tip="Loading..."
   >
-    <a-col
-        :xs="24"
-        :md="12"
-        :lg="8"
-        :xxl="6"
-        v-for="photo in photos"
+    <a-row
+        :style="{margin: '0', padding: '20px', width: '100%'}"
+        :gutter="[36, 36]"
+        v-if="!fetching"
     >
-      <a-card
-          class="ms-card ms-photo-transition"
-          hoverable
-          :style="{height: '100%'}"
+      <a-col
+          :xs="24"
+          :md="12"
+          :lg="8"
+          :xl="6"
+          v-for="photo in photos"
       >
-        <template #cover>
-          <img
-              alt="example"
-              src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-          />
-        </template>
-
-        <a-card-meta
-            :title="photo.title"
-            :description="photo.description"
+        <a-card
+            class="ms-card ms-photo-transition"
+            hoverable
+            :style="{height: '100%', display: 'flex', flexDirection: 'column'}"
+            :body-style="{flexGrow: '1'}"
         >
-        </a-card-meta>
-        <a-divider
-            :style="{fontSize: '14px'}"
-            orientation="right"
-            orientation-margin="0px"
-        >Made by
-        </a-divider>
-        <a-card-meta
-            :style="{textAlign: 'right'}"
-            :description="photo.user.username"
+          <template #cover>
+            <img
+                alt="example"
+                src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+            />
+          </template>
+
+          <a-card-meta
+              :title="photo.title"
+              :description="photo.description"
+          >
+          </a-card-meta>
+          <a-divider
+              :style="{fontSize: '14px'}"
+              orientation="right"
+              orientation-margin="0px"
+          >Made by
+          </a-divider>
+          <a-card-meta
+              :style="{textAlign: 'right'}"
+              :description="photo.user.username"
+          >
+          </a-card-meta>
+
+          <a-divider
+              :style="{fontSize: '14px'}"
+              orientation="right"
+              orientation-margin="0px"
+          >Categories
+          </a-divider>
+          <a-card-meta
+              v-for="category in photo.categories"
+              :style="{textAlign: 'right'}"
+              :description="category.name"
+          >
+          </a-card-meta>
+
+          <template #actions>
+            <a-button
+                type="link"
+                @click="showSendMessageModal(photo)"
+            >
+              <message-outlined :style="{fontSize: '16px'}" key="message"/>
+            </a-button>
+          </template>
+        </a-card>
+      </a-col>
+    </a-row>
+  </a-spin>
+
+  <!--    SEND MESSAGE MODAL    -->
+  <a-modal
+      ref="modalRef"
+      v-model:open="showSendMessage"
+  >
+    <template #title>
+      Send message to
+      <a-tag :style="{fontSize: '16px'}" color="blue">
+        <user-outlined/>
+        {{ receiverName }}
+      </a-tag>
+    </template>
+    <a-form
+        @submit.prevent="sendMessage()"
+        layout="vertical"
+    >
+      <a-form-item
+          label="Message"
+          :help="errors && errors.content"
+          :validate-status="getFieldStatus('content')"
+      >
+        <a-input
+            v-model:value="messageContent"
         >
-        </a-card-meta>
 
-        <a-divider
-            :style="{fontSize: '14px'}"
-            orientation="right"
-            orientation-margin="0px"
-        >Categories
-        </a-divider>
-        <a-card-meta
-            v-for="category in photo.categories"
-            :style="{textAlign: 'right'}"
-            :description="category.name"
-        >
-        </a-card-meta>
+        </a-input>
+      </a-form-item>
+
+      <a-button
+          html-type="submit"
+          type="primary"
+          :loading="isSubmitting"
+      >
+        Send
+      </a-button>
+    </a-form>
+    <template #footer>
+      <!--    to hide default footer buttons    -->
+    </template>
+  </a-modal>
 
 
-      </a-card>
-    </a-col>
-
-  </a-row>
 </template>
 
 <style lang="scss">

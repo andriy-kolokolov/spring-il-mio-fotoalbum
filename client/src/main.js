@@ -6,17 +6,16 @@ import 'ant-design-vue/dist/reset.css'; // antdv styles reset
 
 import Antd from 'ant-design-vue'
 
-import dayjs from 'dayjs';
-import 'dayjs/locale/it.js';
-
 import router from './router/index.js';
 
 import App from './App.vue'
 import { authState, setAuthStatus, setUser } from "./store/index.js";
 
 
-// set locale
-dayjs.locale('it-IT');
+// set IT locale
+//import dayjs from 'dayjs';
+// import 'dayjs/locale/it.js';
+// dayjs.locale('it-IT');
 
 const app = createApp(App)
     .use(Antd)

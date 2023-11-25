@@ -135,10 +135,12 @@ export default {
         <a-button
             v-if="authenticated"
             type="primary"
+            size="small"
+            :style="{fontSize: '13px'}"
             danger
             @click="handleLogoutClick"
         >
-          Logout
+          Logout <LoginOutlined/>
         </a-button>
       </a-space>
     </a-col>

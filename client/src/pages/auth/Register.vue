@@ -27,6 +27,7 @@ export default {
       this.success = false;
       this.userExists = null;
       try {
+        // to simulate request
         await new Promise(resolve => setTimeout(resolve, 500));
         const response = await AuthService.register(this.form);
         if (response.success) {

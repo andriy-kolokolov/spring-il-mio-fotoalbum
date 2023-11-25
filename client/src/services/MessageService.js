@@ -36,6 +36,19 @@ const photoService = {
             return error;
         }
     },
+
+    async sendMessage(receiverUserId, messageContent) {
+        try {
+            const senderId = JSON.parse(localStorage.getItem('user')).id;
+            const response = await API.post(`/${senderId}/messages/send`, {
+                receiverId: receiverUserId,
+                content: messageContent
+            });
+            return response.data;
+        } catch (error) {
+            return error;
+        }
+    },
 };
 
 export default photoService;
