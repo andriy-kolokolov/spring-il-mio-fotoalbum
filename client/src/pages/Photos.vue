@@ -10,10 +10,16 @@ import {
 import PhotoService from "../services/PhotoService.js";
 import MessageService from "../services/MessageService.js";
 import { message as antMessage } from "ant-design-vue";
+import { authState } from "../store/index.js";
 
 
 export default {
   name: 'Photos',
+  computed: {
+    authState() {
+      return authState
+    }
+  },
   components: {
     DeleteOutlined,
     SettingOutlined,
@@ -198,7 +204,7 @@ export default {
           >
           </a-card-meta>
 
-          <template #actions>
+          <template v-if="authState.isAuthenticated" #actions>
             <a-button
                 type="link"
                 @click="showSendMessageModal(photo)"
