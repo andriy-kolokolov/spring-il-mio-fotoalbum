@@ -24,11 +24,10 @@ const app = createApp(App)
 // set the base URL for Axios
 axios.defaults.baseURL = 'http://localhost:8080/';
 
-// auth check, save user data in global variable
+// auth check, save user data in storage
 if (localStorage.getItem('token') && localStorage.getItem('user')) {
     setAuthStatus(true);
     setUser(JSON.parse(localStorage.getItem('user'))) ;
-    console.log(localStorage.getItem('user'))
 }
 
 app.mount('#app')

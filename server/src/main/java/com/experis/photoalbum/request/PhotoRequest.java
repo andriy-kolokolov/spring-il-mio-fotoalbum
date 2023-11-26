@@ -15,4 +15,5 @@ public class PhotoRequest {
     private String description;
     private Boolean isVisible;
     private List<Long> categoryIds;
+    private String url;
 }

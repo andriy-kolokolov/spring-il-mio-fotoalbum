@@ -16,6 +16,7 @@ public class PhotoDTO {
     private int id;
     private String title;
     private String description;
+    private String url;
     private Boolean isVisible;
     private UserDTO user;
     private List<CategoryDTO> categories;
@@ -25,6 +26,7 @@ public class PhotoDTO {
         dto.setId(photo.getId());
         dto.setTitle(photo.getTitle());
         dto.setDescription(photo.getDescription());
+        dto.setUrl(photo.getUrl());
         dto.setIsVisible(photo.getIsVisible());
         dto.setUser(UserDTO.fromUser(photo.getUser()));
 

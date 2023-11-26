@@ -12,7 +12,13 @@ import com.experis.photoalbum.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,7 +43,7 @@ public class PhotoRestController {
     ) {
         List<Photo> photos = (title != null && !title.trim().isEmpty()) ?
                 photoService.findByTitle(title) :
-                photoService.finAllVisible();
+                photoService.findAllVisible();
         List<PhotoDTO> photoDTOs = photos
                 .stream()
                 .map(PhotoDTO::fromPhoto)
@@ -72,6 +78,7 @@ public class PhotoRestController {
         photo.setTitle(photoRequest.getTitle());
         photo.setDescription(photoRequest.getDescription());
         photo.setIsVisible(photoRequest.getIsVisible());
+        photo.setUrl(photoRequest.getUrl());
 
         Set<Category> categories = categoryService.findByIds(photoRequest.getCategoryIds());
         photo.setCategories(categories);
@@ -112,5 +119,32 @@ public class PhotoRestController {
 
         return ResponseEntity
                 .ok(new ApiResponse("Photo updated successfully", true));
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+        if (file.isEmpty()) {
+            return ResponseEntity.badRequest().body("File is empty");
+        }
+
+        try {
+            // define the directory where files will be saved
+            String uploadDir = "server/src/main/resources/static/uploads";
+
+            // create the directory if it doesn't exist
+            File directory = new File(uploadDir);
+            if (!directory.exists()) {
+                directory.mkdir();
+            }
+
+            // Save the file
+            byte[] bytes = file.getBytes();
+            Path path = Paths.get(uploadDir + File.separator + file.getOriginalFilename());
+            Files.write(path, bytes);
+
+            return ResponseEntity.ok("File uploaded successfully.");
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().body("Could not upload the file: " + e.getMessage());
+        }
     }
 }

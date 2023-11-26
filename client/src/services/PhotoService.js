@@ -9,17 +9,34 @@ const API = axios.create({
 API.interceptors.request.use((req) => {
     const token = JSON.parse(localStorage.getItem('token'));
     if (token) {
-        req.headers.Authorization = `Bearer ${token}`;
+        req.headers.Authorization = `Bearer ${ token }`;
     }
     return req;
 });
 
 const photoService = {
+
+    async uploadPhoto(request) {
+        try {
+            console.log(request.file)
+            const formData = new FormData();
+            formData.append('file', request.file);
+
+            const response = await API.post('/upload', formData, {
+                headers: {
+                    'Content-type': 'multipart/form-data'
+                }
+            });
+            return response.data;
+        } catch (error) {
+            return error;
+        }
+    },
+
     // Create a new photo
     async createPhoto(photoData) {
         try {
             const response = await API.post('/add', photoData);
-            console.log(response)
             return response.data;
         } catch (error) {
             return error;
@@ -53,7 +70,7 @@ const photoService = {
     // Get photos by user id
     async getPhotosByUserId(id) {
         try {
-            const response = await API.get(`/list/${id}`);
+            const response = await API.get(`/list/${ id }`);
             return response.data;
         } catch (error) {
             return error;
@@ -63,7 +80,7 @@ const photoService = {
     // Update a photo
     async updatePhoto(id, updatedData) {
         try {
-            const response = await API.put(`/update/${id}`, updatedData);
+            const response = await API.put(`/update/${ id }`, updatedData);
             return response.data;
         } catch (error) {
             return error;
@@ -73,7 +90,7 @@ const photoService = {
     // Delete a photo
     async deletePhoto(id) {
         try {
-            const response = await API.delete(`/delete/${id}`);
+            const response = await API.delete(`/delete/${ id }`);
             return response.data;
         } catch (error) {
             return error;

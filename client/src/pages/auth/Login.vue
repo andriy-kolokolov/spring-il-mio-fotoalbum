@@ -109,7 +109,7 @@ export default {
         <a-form-item>
 
           <a-typography-paragraph>
-            Use <a-tag color="orange">Alice</a-tag> for username and <a-tag color="orange">asdasd</a-tag> for password.
+            Use <a-tag color="orange">Alice</a-tag> for username and <a-tag color="orange">123123</a-tag> for password.
           </a-typography-paragraph>
         </a-form-item>
 

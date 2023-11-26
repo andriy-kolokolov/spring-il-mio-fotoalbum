@@ -1,6 +1,6 @@
 -- Users
 INSERT INTO experis_photoalbum.users (username, password)
-VALUES ('Alice', 'password'),
+VALUES ('Alice', '$2a$10$pUrnltuoexQgajH4aoBcgOFn01t9udf9hfHlZolHv7Rz6A0mW3uDa'),
        ('Bob', 'password'),
        ('Charlie', 'password'),
        ('David', 'password'),

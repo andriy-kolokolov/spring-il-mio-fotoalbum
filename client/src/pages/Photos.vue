@@ -92,13 +92,13 @@ export default {
       }
     },
     resetSearch() {
-      if(this.searchTerm.length > 0) {
+      if (this.searchTerm.length > 0) {
         this.searchTerm = '';
         this.fetchPhotos();
       } else {
         antMessage.warning("Search already reset.")
       }
-    }
+    },
   },
   mounted() {
     this.fetchPhotos()
@@ -170,7 +170,9 @@ export default {
           <template #cover>
             <img
                 alt="example"
-                src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+                :src="photo.url === null ?
+                          'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png' :
+                          photo.url"
             />
           </template>
 

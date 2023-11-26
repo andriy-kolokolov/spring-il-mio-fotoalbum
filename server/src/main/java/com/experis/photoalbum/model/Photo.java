@@ -34,6 +34,8 @@ public class Photo {
 
     private Boolean isVisible;
 
+    private String url;
+
     @ManyToMany()
     @JoinTable(
             name = "photo_category",

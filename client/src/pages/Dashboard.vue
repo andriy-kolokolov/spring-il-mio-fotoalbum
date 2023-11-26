@@ -1,9 +1,16 @@
 <script>
-import { EditOutlined, DeleteOutlined, SettingOutlined } from "@ant-design/icons-vue";
+import {
+  EditOutlined,
+  DeleteOutlined,
+  SettingOutlined,
+  UploadOutlined,
+  PlusOutlined,
+} from "@ant-design/icons-vue";
 import PhotoService from "../services/PhotoService.js";
 import { authState } from "../store/index.js";
 import { message } from "ant-design-vue";
 import CategoryService from "../services/CategoryService.js";
+import dayjs from "dayjs";
 
 export default {
   name: 'Dashboard',
@@ -11,6 +18,8 @@ export default {
     SettingOutlined,
     EditOutlined,
     DeleteOutlined,
+    UploadOutlined,
+    PlusOutlined,
   },
   data() {
     return {
@@ -26,16 +35,21 @@ export default {
         title: '',
         description: '',
         isVisible: false,
-        categoryIds: []
+        categoryIds: [],
+        url: '',
       },
       isSubmitting: false,
       errors: [],
       success: false,
       deletingPhotoId: null,
       fetching: true,
+      fileList: [],
+      uploadProgress: 0,
+      previewVisible: false,
     }
   },
   methods: {
+    dayjs,
     async fetchUserPhotos() {
       this.photos = await PhotoService.getPhotosByUserId(authState.user.id);
     },
@@ -63,6 +77,8 @@ export default {
 
       try {
         this.form.categoryIds = this.selectedCategories;
+        // set photo url
+        this.form.url = `http://localhost:8080/uploads/${this.fileList[0].name}`
         const response = await PhotoService.createPhoto(this.form);
         console.log(this.form)
         if (response.success) {
@@ -132,7 +148,31 @@ export default {
         console.error(error.data.response);
         this.deletingPhotoId = null;
       }
+    },
+    async handleUpload(request) {
 
+      request.onProgress = (e) => {
+        const percent = Math.floor((e.loaded / e.total) * 100);
+        this.uploadProgress = percent;
+        this.fileList[0].percent = percent;
+      };
+
+      try {
+        const response = await PhotoService.uploadPhoto(request);
+        // Reset progress or handle success state
+        this.uploadProgress = 100; // or set to 0 if you prefer
+        this.fileList[0].status = 'done'
+
+      } catch (error) {
+        console.error(error);
+        // Handle error state
+        this.uploadProgress = 0;
+      }
+    },
+    getPhotoUrl(photo) {
+      return photo.url === null ?
+          'https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png' :
+          photo.url
     }
   },
   mounted() {
@@ -193,7 +233,8 @@ export default {
           <template #cover>
             <img
                 alt="example"
-                src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+                :src="getPhotoUrl(photo)"
+
             />
           </template>
 
@@ -313,6 +354,37 @@ export default {
         </a-checkbox-group>
       </a-form-item>
 
+      <!--    PHOTO UPLOAD    -->
+      <a-form-item label="Photo">
+        <a-upload
+            v-model:file-list="fileList"
+            list-type="picture-card"
+            :custom-request="handleUpload"
+            :showInfo="false"
+            @preview="() => previewVisible = true"
+
+        >
+          <div v-if="fileList.length < 1">
+            <plus-outlined />
+            <div style="margin-top: 8px">Upload</div>
+          </div>
+        </a-upload>
+
+        <a-modal
+            :open="previewVisible"
+            :title="fileList.length > 0 ? fileList[0].name : ''"
+            :footer="null"
+            @cancel="() => previewVisible = false"
+        >
+          <img
+              alt="photo preview"
+              style="width: 100%"
+              :src="`http://localhost:8080/uploads/${fileList[0].name}`"
+          />
+        </a-modal>
+
+      </a-form-item>
+
       <a-button
           html-type="submit"
           type="primary"
@@ -380,5 +452,11 @@ export default {
 .fade-out {
   transition: opacity 0.5s ease-out;
   opacity: 0;
+}
+
+.ant-upload-list-item-actions {
+  button:last-child {
+    display: none;
+  }
 }
 </style>
