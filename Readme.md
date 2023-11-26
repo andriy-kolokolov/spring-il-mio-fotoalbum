@@ -1,7 +1,7 @@
 ## Spring rest API + Vuejs simple photoalbum manager 
 
 ## Features
-- Server - Authentication system using JWT token with expiration
+- Server - Authentication system and rest API protected by CORS and JWT token with expiration
 - Client - Components render like navigation, buttons ecc.. based on auth status
 - authenticated users can:
   - view list of all photos  
