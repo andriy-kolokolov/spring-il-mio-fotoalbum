@@ -64,6 +64,18 @@ export default {
       this.photoCategories = response;
 
     },
+    resetForm() {
+      this.form = {
+        userId: authState.user.id,
+        title: '',
+        description: '',
+        isVisible: false,
+        categoryIds: [],
+        url: '',
+      };
+      this.fileList = [];
+    },
+
     openCreate() {
       this.showCreate = true;
       this.selectedCategories = [];
@@ -78,13 +90,14 @@ export default {
       try {
         this.form.categoryIds = this.selectedCategories;
         // set photo url
-        this.form.url = `http://localhost:8080/uploads/${this.fileList[0].name}`
+        this.form.url = `http://localhost:8080/uploads/${ this.fileList[0].name }`
         const response = await PhotoService.createPhoto(this.form);
         console.log(this.form)
         if (response.success) {
           this.success = true;
           await this.fetchUserPhotos();
           this.showCreate = false;
+          this.resetForm();
           await new Promise(resolve => setTimeout(resolve, 350));
           message.success('New photo created successfully!')
         } else {
@@ -365,7 +378,7 @@ export default {
 
         >
           <div v-if="fileList.length < 1">
-            <plus-outlined />
+            <plus-outlined/>
             <div style="margin-top: 8px">Upload</div>
           </div>
         </a-upload>
