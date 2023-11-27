@@ -1,5 +1,6 @@
 package com.experis.photoalbum.dto;
 
+import com.experis.photoalbum.model.Role;
 import com.experis.photoalbum.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -18,11 +18,13 @@ public class UserDTO {
 
     private Long id;
     private String username;
+    private Set<Role> roles;
 
     public static UserDTO fromUser(User user) {
         UserDTO dto = new UserDTO();
         dto.setId(user.getId());
         dto.setUsername(user.getUsername());
+        dto.setRoles(user.getRoles());
 
         return dto;
     }

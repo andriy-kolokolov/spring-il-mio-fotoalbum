@@ -176,7 +176,7 @@ export default {
     }
   },
   mounted() {
-    this.fetchUserPhotos();
+    this.fetchUserPhotos()
     this.fetchAllCategories();
     this.fetching = false;
   }
@@ -272,7 +272,7 @@ export default {
           </a-divider>
           <a-card-meta
               :style="{textAlign: 'right'}"
-              description="You"
+              :description="photo.user.username"
           >
           </a-card-meta>
           <a-divider

@@ -56,7 +56,15 @@ public class PhotoRestController {
     public ResponseEntity<List<PhotoDTO>> findPhotosByUserId(
             @PathVariable(value = "id") Long id
     ) {
-        List<Photo> photos = photoService.findByUserId(id);
+        // retrieve all photos for super admin user
+        boolean userIsSuperAdmin = userService.isUserSuperAdmin(id);
+
+        List<Photo> photos;
+        if (userIsSuperAdmin) {
+            photos = photoService.findAll();
+        } else {
+            photos = photoService.findByUserId(id);
+        }
 
         if (photos == null || photos.isEmpty()) {
             return ResponseEntity.notFound().build();

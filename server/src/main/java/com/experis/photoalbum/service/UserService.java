@@ -1,6 +1,8 @@
 package com.experis.photoalbum.service;
 
+import com.experis.photoalbum.model.Role;
 import com.experis.photoalbum.model.User;
+import com.experis.photoalbum.repository.RoleRepository;
 import com.experis.photoalbum.repository.UserRepository;
 import com.experis.photoalbum.request.SignupRequest;
 import com.experis.photoalbum.security.UserDetailsImpl;
@@ -11,14 +13,22 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Set;
+
 @Service
 public class UserService implements UserDetailsService {
 
     private UserRepository userRepository;
+    private RoleRepository roleRepository;
 
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public void setUserRepository(UserRepository userRepository, RoleRepository roleRepository) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
     }
 
     @Override
@@ -29,17 +39,22 @@ public class UserService implements UserDetailsService {
         return UserDetailsImpl.build(user);
     }
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
     public void registerUser(SignupRequest signupRequest) {
         User user = new User();
+        Role userRole = roleRepository.findByName("user");
+
         user.setUsername(signupRequest.getUsername());
         user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
+        user.setRoles(Set.of(userRole));
         userRepository.save(user);
     }
 
     public User getUserById(Long id) {
         return userRepository.findById(id).orElse(null);
+    }
+
+    public boolean isUserSuperAdmin(Long id) {
+        User user = getUserById(id);
+        return user.getRoles().contains(roleRepository.findByName("super_admin"));
     }
 }

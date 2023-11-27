@@ -1,16 +1,33 @@
 -- Users
 INSERT INTO experis_photoalbum.users (username, password)
-VALUES ('Alice', '$2a$10$pUrnltuoexQgajH4aoBcgOFn01t9udf9hfHlZolHv7Rz6A0mW3uDa'),
-       ('Bob', 'password'),
-       ('Charlie', 'password'),
-       ('David', 'password'),
-       ('Emma', 'password'),
-       ('Fiona', 'password'),
-       ('George', 'password'),
-       ('Hannah', 'password'),
-       ('Ian', 'password'),
-       ('Julia', 'password');
+VALUES ('Super Admin', '$2a$10$pUrnltuoexQgajH4aoBcgOFn01t9udf9hfHlZolHv7Rz6A0mW3uDa'),
+       ('Bob', '$2a$10$pUrnltuoexQgajH4aoBcgOFn01t9udf9hfHlZolHv7Rz6A0mW3uDa'),
+       ('Charlie', '$2a$10$pUrnltuoexQgajH4aoBcgOFn01t9udf9hfHlZolHv7Rz6A0mW3uDa'),
+       ('David', '$2a$10$pUrnltuoexQgajH4aoBcgOFn01t9udf9hfHlZolHv7Rz6A0mW3uDa'),
+       ('Emma', '$2a$10$pUrnltuoexQgajH4aoBcgOFn01t9udf9hfHlZolHv7Rz6A0mW3uDa'),
+       ('Fiona', '$2a$10$pUrnltuoexQgajH4aoBcgOFn01t9udf9hfHlZolHv7Rz6A0mW3uDa'),
+       ('George', '$2a$10$pUrnltuoexQgajH4aoBcgOFn01t9udf9hfHlZolHv7Rz6A0mW3uDa'),
+       ('Hannah', '$2a$10$pUrnltuoexQgajH4aoBcgOFn01t9udf9hfHlZolHv7Rz6A0mW3uDa'),
+       ('Ian', '$2a$10$pUrnltuoexQgajH4aoBcgOFn01t9udf9hfHlZolHv7Rz6A0mW3uDa'),
+       ('Julia', '$2a$10$pUrnltuoexQgajH4aoBcgOFn01t9udf9hfHlZolHv7Rz6A0mW3uDa');
 
+-- Roles
+INSERT INTO experis_photoalbum.roles (name)
+VALUES ('super_admin'),
+       ('user');
+
+-- User-Role Relationships
+INSERT INTO experis_photoalbum.user_role (user_id, role_id)
+VALUES (1, 1), -- super admin
+       (2, 2),
+       (3, 2),
+       (4, 2),
+       (5, 2),
+       (6, 2),
+       (7, 2),
+       (8, 2),
+       (9, 2),
+       (10, 2);
 
 -- Categories
 INSERT INTO experis_photoalbum.categories (name)
