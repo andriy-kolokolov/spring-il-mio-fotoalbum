@@ -5,7 +5,7 @@
 - Client - Components render like navigation, buttons ecc.. based on auth status
 - authenticated users can:
   - view list of all photos  
-  - create, read, update, delete, make visible/invisible their own photos.
+  - create (using file upload), read, update, delete, make visible/invisible their own photos.
   - send messages to other users using photo card action button 'message'
   - view received and sent messages on related page 'Messages'
 - unauthenticated users can:
