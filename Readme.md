@@ -14,6 +14,11 @@
   - register as new user
   - login
 
+## Versions
+- Java 21
+- Vue 3
+- Ant Design 4.0.7
+
 ## How to run application ?
 
 Clone repository using:
