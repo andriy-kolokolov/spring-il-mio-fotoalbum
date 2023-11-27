@@ -31,36 +31,27 @@ import java.util.Optional;
 @RequestMapping("/auth")
 public class SecurityController {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
-    private AuthenticationManager authenticationManager;
-    private JwtCore jwtCore;
-    private UserService userService;
+    private final AuthenticationManager authenticationManager;
+    private final JwtCore jwtCore;
+    private final UserService userService;
 
     @Autowired
-    public void setUserRepository(UserRepository userRepository) {
+    public SecurityController(
+            UserRepository userRepository,
+            UserService userService,
+            PasswordEncoder passwordEncoder,
+            AuthenticationManager authenticationManager,
+            JwtCore jwtCore
+    ) {
         this.userRepository = userRepository;
-    }
-
-    @Autowired
-    public void setUserService(UserService userService) {
         this.userService = userService;
-    }
-
-    @Autowired
-    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
-    }
-
-    @Autowired
-    public void setAuthenticationManager(AuthenticationManager authenticationManager) {
         this.authenticationManager = authenticationManager;
-    }
-
-    @Autowired
-    public void setJwtCore(JwtCore jwtCore) {
         this.jwtCore = jwtCore;
     }
+
 
     @PostMapping(value = "/signup")
     ResponseEntity<?> signup(@Valid @RequestBody SignupRequest signupRequest) {
@@ -82,19 +73,17 @@ public class SecurityController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtCore.generateToken(authentication);
 
-            Optional<User> optionalUser = userRepository.findByUsername(signinRequest.getUsername());
-
-            if (optionalUser.isEmpty()) {
-                return ResponseEntity
-                        .status(HttpStatus.UNAUTHORIZED)
-                        .body(new SigninResponse(null, "User not found", false, null));
-            }
-
-            User user = optionalUser.get();
-            UserDTO userDTO = UserDTO.fromUser(user);
-
-            return ResponseEntity
-                    .ok(new SigninResponse(jwt, "Authentication successful", true, userDTO));
+            return userRepository.findByUsername(signinRequest.getUsername())
+                    .map(user -> ResponseEntity.ok(
+                            new SigninResponse(
+                                    jwt,
+                                    "Authentication successful",
+                                    true,
+                                    UserDTO.fromUser(user)
+                            )))
+                    .orElseGet(() -> ResponseEntity
+                            .status(HttpStatus.UNAUTHORIZED)
+                            .body(new SigninResponse(null, "User not found", false, null)));
 
         } catch (BadCredentialsException e) {
             return ResponseEntity

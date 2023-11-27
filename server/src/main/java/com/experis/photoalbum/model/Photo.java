@@ -20,7 +20,7 @@ public class Photo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Long id;
 
     @Column(nullable = false)
     @NotEmpty(message = "Title is required")

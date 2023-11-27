@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PhotoDTO {
-    private int id;
+    private Long id;
     private String title;
     private String description;
     private String url;

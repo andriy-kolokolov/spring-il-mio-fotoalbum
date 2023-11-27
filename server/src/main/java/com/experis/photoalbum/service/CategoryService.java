@@ -30,4 +30,9 @@ public class CategoryService {
     public Set<Category> findByIds(List<Long> ids) {
         return categoryRepository.findCategoriesByIdIn(ids);
     }
+
+    //find by id
+    public Category findById(Long id) {
+        return categoryRepository.findById(id).orElse(null);
+    }
 }

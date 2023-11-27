@@ -7,6 +7,8 @@ import com.experis.photoalbum.repository.UserRepository;
 import com.experis.photoalbum.request.SignupRequest;
 import com.experis.photoalbum.security.UserDetailsImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -56,5 +58,19 @@ public class UserService implements UserDetailsService {
     public boolean isUserSuperAdmin(Long id) {
         User user = getUserById(id);
         return user.getRoles().contains(roleRepository.findByName("super_admin"));
+    }
+
+    // get authenticated user
+    public User getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return null;
+        }
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof User) {
+            return (User) principal;
+        }
+        // Handle the case where the principal is not an instance of User
+        return null;
     }
 }

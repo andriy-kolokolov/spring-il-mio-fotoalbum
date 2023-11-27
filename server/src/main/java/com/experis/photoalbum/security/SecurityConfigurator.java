@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -46,7 +47,9 @@ public class SecurityConfigurator {
     }
 
     public void configureAuthManagerBuilder(AuthenticationManagerBuilder authManagerBuilder) throws Exception {
-        authManagerBuilder.userDetailsService(userService).passwordEncoder(passwordEncoder());
+        authManagerBuilder
+                .userDetailsService(userService)
+                .passwordEncoder(passwordEncoder());
     }
 
     @Bean
@@ -67,7 +70,7 @@ public class SecurityConfigurator {
                         .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                 )
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 )
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/v1/photo/list").permitAll()
@@ -75,7 +78,14 @@ public class SecurityConfigurator {
                         .requestMatchers("/auth/**").permitAll()
                         .anyRequest().permitAll()
                 )
-                .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
+                // MVC AUTHENTICATION
+                .formLogin(formLogin ->
+                        formLogin.loginPage("/login")
+                                .loginProcessingUrl("auth/signin")
+                                .permitAll()
+                )
+        ;
         return http.build();
     }
 }
